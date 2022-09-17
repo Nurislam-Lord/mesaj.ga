@@ -57,13 +57,10 @@ const User = mongoose.model('Users', userSchema)
 
 const MesajG = mongoose.model('MesajG', mesajSchema)
 
-server.listen(process.env.PORT || 8080, (Socket) => {
-    console.log('server çalışıyor');
-});
 const dbURL = 'mongodb+srv://nr:qwe123@mesajga.pumjten.mongodb.net/?retryWrites=true&w=majority'
 mongoose.connect(dbURL)
     .then((result) => {
-        // app2.listen(process.env.PORT || 8080, console.log('server çalışıyor'))
+        app2.listen(process.env.PORT || 8080, console.log('server çalışıyor'))
     }).catch((err) => {
         console.log(err + ' mongodb hatası!');
     });
