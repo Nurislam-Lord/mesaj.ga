@@ -57,8 +57,7 @@ const User = mongoose.model('Users', userSchema)
 
 const MesajG = mongoose.model('MesajG', mesajSchema)
 
-server.listen(8080, (Socket) => {
-    const starCountRef = ref(db, 'mesajlar/');
+server.listen(process.env.PORT || 8080, (Socket) => {
     console.log('server çalışıyor');
 });
 const dbURL = 'mongodb+srv://nr:qwe123@mesajga.pumjten.mongodb.net/?retryWrites=true&w=majority'
