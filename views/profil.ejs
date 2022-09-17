@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="tr-TR">
+<head>
+    <meta charset="UTF-8">
+    <script src="https://kit.fontawesome.com/814bf03a7c.js" crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="style.css">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mesaj GA | Hesabım</title>
+</head>
+<body>
+    <nav class="navbar2">
+        <img class="ilogo" src="https://r.resimlink.com/g1DLbe9.png" alt="">
+        <h1 class="logo">MESAJ GA</h1>
+        <input type="checkbox" id="menuBtn">
+        <label for="menuBtn" class="menuBtn">
+            <i class="fas fa-bars"></i>
+        </label>
+        <ul>
+            <li><a href="/hesap">Anasayfa</a></li>         
+            <li><a href="/iletisim">İletişim</a></li>        
+            <li><a class="dboxr etkin" href="/profil">Profil</a></li>        
+            <li><a href="/cikis-yap" class="bg-danger dboxr">Çıkış Yap</a></li>        
+            <li class="dboxl">
+                <label for="dbox">
+                    <a class="etkin" style="text-transform: capitalize;"  onclick="dbox()">
+                        <img src="<%=user.photoURL%>" class="pr">
+                        <%=user.displayName%>
+                        <i class="fa-solid fa-chevron-down" id="abs"></i>
+                    </a>
+                </label>
+            </li>
+        </ul>
+    </nav>
+    <div class="bgs">
+        <br><br><br><br>
+        <input type="checkbox" id="dbox">
+        <div id="onurd">
+            <div id="onur">
+                <button class="btn btn-close position-absolute" style="transition: all 0.25s; top: 10px; right: 10px;" onclick="kapat('onurd')"></button>
+                <i class="fa-solid fa-circle-exclamation"></i>
+                <h1>Önemli</h1>
+                <h4>Profilinizi düzenlemek için aşağıdaki video'yu izleyin.</h4>
+                <video src="rehber.mp4" class="video" controls></video><br>
+                <button onclick="kapat('onurd');" class="btn btn-outline-dark mb-3">tamam</button>
+            </div>
+            <br><br>
+        </div>
+        <ul class="dbox">
+            <a href="/profil"><li class="pro">Profil</li></a>
+            <a href="/cikis-yap"><li class="cyb">Çıkış Yap</li></a>
+        </ul>
+        <img src="<%=user.photoURL%>" class="pror"><br>
+        <h1 style="text-transform: capitalize;"><%=user.displayName%></h1>
+        <h5>Rol: <%=rol%></h4><br><br>
+        <button class="btn btn-primary m-2" onclick="ac('onurd','block')">
+            Rehber videosunu aç
+        </button>
+        <br>
+        <a href="http://resimlink.com" target="_blank" rel="noopener noreferrer">
+            <button class="btn btn-info">
+                resimlink.com'u aç
+            </button>
+        </a>
+        <br><br>
+        <form method="post">
+            <input type="text" autocomplete="off" name="rlink" placeholder="Resim Linki" class="inputf"><br><br>
+            <input type="text" autocomplete="off" name="ad" placeholder="Adınız" class="inputf"><br><br>
+            <button class="btn btn-success" type="submit">Değişiklikleri kaydet</button>
+        </form>
+        <footer style="margin-top: calc(50vh - 85px);">
+            &copy; 2022 İndir GA
+        </footer>
+    </div>
+    <script src="./index.js"></script>
+</body>
+</html>

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div>
+        <% mesajlar.forEach(mesaj => { %>
+            <h2><%=mesaj.icerik%></h2>
+        <% }) %>
+    </div>
+    <script src="http://localhost:8080/socket.io/socket.io.js"></script>
+    <script>
+        let socket = io("http://localhost:8080");
+        var html = ''
+        var bodyy = document.querySelector('div')
+        socket.on("message", (mesaj) => {
+            console.log(mesaj);
+            var boih = bodyy.innerHTML
+            html = boih
+            html = html + `<h2>${mesaj.icerik}</h2>`
+            bodyy.innerHTML = html
+        })
+    </script>
+</body>
+
+</html>

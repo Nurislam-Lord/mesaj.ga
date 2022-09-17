@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="tr-TR">
+<head>
+    <meta charset="UTF-8">
+    <script src="https://kit.fontawesome.com/814bf03a7c.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="style.css">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mesaj GA | Anasayfa</title>
+</head>
+<body>
+    <nav class="navbar">
+        <img class="ilogo" src="https://r.resimlink.com/g1DLbe9.png" alt="">
+        <h1 class="logo">MESAJ GA</h1>
+        <input type="checkbox" id="menuBtn">
+        <label for="menuBtn" class="menuBtn">
+            <i class="fas fa-bars"></i>
+        </label>
+        <ul>
+            <li><a href="/">Anasayfa</a></li>         
+            <li><a href="/iletisim">İletişim</a></li>        
+            <li><a href="/giris-yap">Giriş Yap</a></li>
+            <li><a class="etkin">Kayıt ol</a></li>
+        </ul>
+    </nav>
+    <div class="bgs">
+        <br><br><br><br>
+        <form method="post" id="kayit">
+            <div class="alert" role="alert">
+                <a style="color: rgb(241, 241, 241);">Şifreler birbiriyle uyuşmuyor.</a>
+            </div><br>
+            <h1>Kayıt ol</h1><br>
+            <input required name="kadi" autocomplete="off" placeholder="Adınızı girin" class="inputf" type="text"><br><br>
+            <input required name="email" autocomplete="off" placeholder="Epostanızı girin" class="inputf" type="email"><br><br>
+            <input required name="pass" autocomplete="off" placeholder="Şifrenizi girin" id="pass1" class="inputf" type="password"><br><br>
+            <input required name="pass2" autocomplete="off" placeholder="Şifrenizi tekrar girin" id="pass1" class="inputf" type="password"><br><br>
+            <input class="kayit-ol" type="submit"><br><br>
+            <h5>Zaten bir tane hesabınız var mı ? <a href="/giris-yap">Giriş yap</a></h5>
+        </form>
+        <br>
+        <footer style="margin-top: calc(100vh - 550px);">
+            &copy; 2022 İndir GA
+        </footer>
+    </div>
+    <script src="./index.js"></script>
+</body>
+</html>
