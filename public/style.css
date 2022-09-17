@@ -341,7 +341,7 @@ hr{
     height: 60px;
     position: absolute;
     bottom: 0;
-    width: 100%;
+    width: calc(100vw - 260px);
     text-align: center;
 }
 
