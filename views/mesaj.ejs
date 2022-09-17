@@ -87,10 +87,10 @@
                         <% }) %>
         </div>
     </div>
-    <script src="/socket.io/socket.io.js"></script>
+    <script src="../socket.io/socket.io.js"></script>
     <script src="../index.js"></script>
     <script>
-        let socket = io("http://localhost:8080");
+        let socket = io("../");
         const list = document.querySelector('.list')
         var kac = 0
         console.log('<%=user.uid%>');
