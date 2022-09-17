@@ -179,7 +179,7 @@ app2.post('/profil', (req, res) => {
             }).catch((err) => {
                 res.send('hata oluştu!err')
                 console.log(err);
-            });
+            })
     }
     if (rlink) {
         User.findOneAndUpdate({ uid: user.uid }, { purl: rlink })
