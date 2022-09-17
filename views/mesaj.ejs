@@ -87,10 +87,10 @@
                         <% }) %>
         </div>
     </div>
-    <script src="../socket.io/socket.io.js"></script>
+    <script src="https://mesajg.herokuapp.com/socket.io/socket.io.js"></script>
     <script src="../index.js"></script>
     <script>
-        let socket = io("../");
+        let socket = io("https://mesajg.herokuapp.com");
         const list = document.querySelector('.list')
         var kac = 0
         console.log('<%=user.uid%>');
