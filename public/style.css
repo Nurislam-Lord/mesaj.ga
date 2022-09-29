@@ -736,9 +736,9 @@ nav ul li a:hover{
 }
 
 @media (max-width:740px){
-    /* #mesaji{
-        width: 200px;
-    } */
+     #mesaji{
+        width: 250px;
+    } 
 
     .hesap{
         width: 100vw;
