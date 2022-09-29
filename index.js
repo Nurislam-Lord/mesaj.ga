@@ -111,29 +111,30 @@ app2.get('/dd', (req, res) => {
 
 var kkbb = 0;
 var uidg = null
+var uid = null
 
 io.on('connection', (socket) => {
-    console.log('kullanıcı bağlandı');
-    const auth = getAuth();
+    console.log('kullanıcı bağlandı')
+    // const auth = getAuth();
     socket.on('chat message', (msg) => {
-        console.log('message: ' + msg);
         const mesajk = new MesajG({
             icerik: msg,
             gid: uidg,
-            goid: user.uid
+            goid: uid
         })
         mesajk.save()
             .then((result) => {
-                console.log(result);
+                console.log('mesaj gönderildi');
             }).catch((err) => {
                 console.log(err);
             });
-    });
+    })
 })
 
 app2.get('/mesaj/:uidg', (req, res) => {
     const auth = getAuth();
     if (req.cookies.user) {
+        uid = req.cookies.user.uid
         uidg = req.params.uidg
         User.find()
             .then((result) => {
@@ -159,7 +160,10 @@ app2.get('/mesaj/:uidg', (req, res) => {
     } else {
         res.redirect('/giris-yap')
     }
+    io.on('chat message', (msg) => {
+        console.log('message: ' + msg);
 
+    });
 })
 
 app2.post('/profil', (req, res) => {
