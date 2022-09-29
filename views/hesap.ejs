@@ -19,15 +19,15 @@
     <nav class="navbar2">
         <img class="ilogo" src="https://r.resimlink.com/g1DLbe9.png" alt="">
         <h1 class="logo">MESAJ GA</h1>
-        <input type="checkbox" id="menuBtn">
-        <label for="menuBtn" class="menuBtn">
+        <!-- <input type="checkbox" id="menuBtn"> -->
+        <label class="menuBtn" onclick="kac()">
             <i class="fas fa-bars"></i>
         </label>
         <ul>
             <li><a class="etkin">Anasayfa</a></li>
             <li><a href="/iletisim">İletişim</a></li>
             <li><a class="dboxr" href="/profil">Profil</a></li>
-            <li><a href="/iletisim" class="bg-danger dboxr">Çıkış Yap</a></li>
+            <li><a href="/cikis-yap" class="bg-danger dboxr">Çıkış Yap</a></li>
             <li class="dboxl">
                 <label for="dbox">
                     <a style="text-transform: capitalize;" onclick="dbox()">
@@ -52,31 +52,38 @@
         <div class="hesap">
             <ul>
                 <% if(msg){ %>
-                    <% msg.forEach(msgg => { %>
-                        <li style="color: black;"><%=msgg%></li>
-                    <% }) %>
-                <% } %>
+                    <% msg.forEach(msgg=> { %>
+                        <li style="color: black;">
+                            <%=msgg%>
+                        </li>
+                        <% }) %>
+                            <% } %>
             </ul>
         </div>
-            <div class="kisi">
-                <% users.forEach(users2 => { %>
-                    <% if(users2.uid != user.uid){ %>
+        <div class="kisi" id="kisi">
+            <a href="/profil" class="profil">Profil</a><br>
+            <% users.forEach(users2=> { %>
+                <% if(users2.uid !=user.uid){ %>
                     <a href="/mesaj/<%=users2.uid%>">
                         <div>
                             <img src="<%=users2.purl%>" alt="">
-                            <h3><%=users2.adi%></h3>
+                            <h3>
+                                <%=users2.adi%>
+                            </h3>
                         </div>
                         <hr>
                     </a>
                     <% } %>
-                <% }) %>
-            </div>
+                        <% }) %>
+        </div>
         <footer>
             &copy; 2022 İndir GA
         </footer>
     </div>
     <script src="./index.js"></script>
-
+    <script>
+        kac();
+    </script>
 </body>
 
 </html>

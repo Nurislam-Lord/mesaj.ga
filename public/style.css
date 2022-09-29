@@ -341,7 +341,7 @@ hr{
     height: 60px;
     position: absolute;
     bottom: 0;
-    width: calc(100vw - 260px);
+    width: calc(100vw - 250px);;
     text-align: center;
 }
 
@@ -352,7 +352,6 @@ hr{
     left: 0px;
     font-size: 23px;
     transition: all 0.3s;
-    margin-left: -250px;
     color: black;
     bottom: 0px;
 }
@@ -361,6 +360,8 @@ hr{
     overflow-y: auto;
     height: calc(100vh - 140px);
     padding: 20px 0px;
+    /* padding-left: 15px; */
+    width: calc(100vw - 250px);
 }
 
 .mg input:focus{
@@ -384,6 +385,7 @@ hr{
     color: black;
     box-shadow: 0px 0px 15px black;
     max-width: 40vw;
+    margin: 0px 0px 10px 15px;
     border-radius: 9999999px;
     text-align: left;
     float: left;
@@ -396,7 +398,7 @@ hr{
     display: inline-block;
     font-size: 20px;
     color: black;
-    margin: 10px 20px 0px 0px;
+    margin: 10px 15px 0px 0px;
     box-shadow: 0px 0px 15px black;
     max-width: 40vw;
     border-radius: 9999999px;
@@ -621,7 +623,7 @@ nav ul li a:hover{
 
 .hesap{
     background-color: rgba(245, 245, 245, 0.15);
-    width: calc(100vw - 260px);
+    width: calc(100vw - 250px);
     float: right;
     height: calc(100vh - 80px);
     display: block;
@@ -675,6 +677,10 @@ nav ul li a:hover{
 .kisi div img{
     left: 10px;
     width: 50px;
+    height: 50px;
+    border: solid 1px blue;
+    border-radius: 10px;
+    background-color: rgba(214, 214, 214, 0.856);
 }
 
 #onur i{
@@ -700,6 +706,14 @@ nav ul li a:hover{
     height: auto;
 }
 
+.profil{
+    color: whitesmoke;
+    font-size: 25px;
+    text-decoration: none;
+    text-align: center;
+    margin-top: 20px;
+}
+
 #onur{
     box-shadow: 0px 0px 6px whitesmoke;
     position: absolute;
@@ -715,7 +729,39 @@ nav ul li a:hover{
     left: 11vw;
 }
 
+@media (max-width:860px){
+    #mesaji{
+        width: 400px;
+    }
+}
+
 @media (max-width:740px){
+    /* #mesaji{
+        width: 200px;
+    } */
+
+    .hesap{
+        width: 100vw;
+    }
+
+    #hesapp{
+        width: 100vw;
+    }
+
+    .kisi{
+        background-color: rgba(0, 0, 0, 0.95);
+        transition: all 0.25s;
+    }
+
+    .mg{
+        width: 100vw;
+    }
+
+    .kisi{
+        position: absolute;
+        left: -250px;
+    }
+
     .dboxl{
         display: none;
     }

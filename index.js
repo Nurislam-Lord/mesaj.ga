@@ -1,14 +1,19 @@
+'use strict';
+
 import { initializeApp } from "@firebase/app";
 import { getDatabase, onValue, push, set, ref, get, update, remove, query, orderByChild, limitToLast } from "@firebase/database";
 import express from 'express';
 import bodyParser from "body-parser";
 import mongoose from "mongoose"
+import cookieParser from 'cookie-parser'
 import nodemailer from "nodemailer"
 import { getAuth, createUserWithEmailAndPassword, signOut, signInWithEmailAndPassword, updateProfile, sendEmailVerification, onAuthStateChanged, sendPasswordResetEmail } from "@firebase/auth"
 const app2 = express()
 import http from 'http';
 const server = http.createServer(app2);
-import { Server, Socket } from 'socket.io'; const io = new Server(server);
+import { Server, Socket } from 'socket.io';
+const io = new Server(server);
+app2.use(cookieParser());
 
 const Schema = mongoose.Schema
 const userSchema = new Schema({
@@ -57,16 +62,19 @@ const User = mongoose.model('Users', userSchema)
 
 const MesajG = mongoose.model('MesajG', mesajSchema)
 
+server.listen(process.env.PORT || 8080, (Socket) => {
+    console.log('server çalışıyor');
+});
+// app2.listen(process.env.PORT || 8080, console.log('server çalışıyor'))
 const dbURL = 'mongodb+srv://nr:qwe123@mesajga.pumjten.mongodb.net/?retryWrites=true&w=majority'
 mongoose.connect(dbURL)
     .then((result) => {
-        app2.listen(process.env.PORT || 8080, console.log('server çalışıyor'))
     }).catch((err) => {
         console.log(err + ' mongodb hatası!');
     });
 
 app2.use(bodyParser.json());
-app2.use(bodyParser.urlencoded({ extended: true }))
+app2.use(express.urlencoded({ extended: false }))
 
 const firebaseConfig = {
     apiKey: "AIzaSyAjSQqvjP6p-Is0bnVq0A1NrLfWqvSoS-0",
@@ -79,7 +87,6 @@ const firebaseConfig = {
     measurementId: "G-XLM7S70XLV"
 }
 
-
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app)
 
@@ -87,17 +94,19 @@ const db = getDatabase(app)
 app2.set('view engine', 'ejs');
 app2.use(express.static('public'))
 
-var user = null;
+// var user = null;
 var rol = null;
 var kkb = 0;
+var sayiii = 0
 
 app2.get('/d', (req, res) => {
-    User.findOneAndUpdate({ adi: 'admin' }, { adi: 'başrılı' })
-        .then((result) => {
-            console.log(result);
-        }).catch((err) => {
-            console.log(err);
-        });
+    sayiii = sayiii + 1;
+    res.cookie('sayi', { sayiii })
+    res.redirect('/dd')
+})
+
+app2.get('/dd', (req, res) => {
+    res.send(req.cookies.sayi.sayiii)
 })
 
 var kkbb = 0;
@@ -105,33 +114,33 @@ var uidg = null
 
 io.on('connection', (socket) => {
     console.log('kullanıcı bağlandı');
-    if(user){
-        socket.on('chat message', (msg) => {
-            console.log('message: ' + msg);
-            const mesajk = new MesajG({
-                icerik: msg,
-                gid: uidg,
-                goid: user.uid
-            })
-            mesajk.save()
-                .then((result) => {
-                    console.log(result);
-                }).catch((err) => {
-                    console.log(err);
-                });
-        });
-    }
-});
+    const auth = getAuth();
+    socket.on('chat message', (msg) => {
+        console.log('message: ' + msg);
+        const mesajk = new MesajG({
+            icerik: msg,
+            gid: uidg,
+            goid: user.uid
+        })
+        mesajk.save()
+            .then((result) => {
+                console.log(result);
+            }).catch((err) => {
+                console.log(err);
+            });
+    });
+})
 
 app2.get('/mesaj/:uidg', (req, res) => {
-    if (user) {
+    const auth = getAuth();
+    if (req.cookies.user) {
         uidg = req.params.uidg
         User.find()
             .then((result) => {
-                MesajG.find({ $or: [{ gid: uidg, goid: user.uid }, { gid: user.uid, goid: uidg }] })
+                MesajG.find({ $or: [{ gid: req.params.uidg, goid: req.cookies.user.uid }, { gid: req.cookies.user.uid, goid: req.params.uidg }] })
                     .then((result2) => {
                         console.log(result2);
-                        res.render('mesaj', { mesajlar: result2, user: user, users: result })
+                        res.render('mesaj', { mesajlar: result2, user: req.cookies.user, users: result })
                     }).catch((err) => {
                         console.log(err);
                     })
@@ -150,6 +159,7 @@ app2.get('/mesaj/:uidg', (req, res) => {
     } else {
         res.redirect('/giris-yap')
     }
+
 })
 
 app2.post('/profil', (req, res) => {
@@ -214,39 +224,32 @@ app2.post('/profil', (req, res) => {
 
 app2.get('/profil', (req, res) => {
     const auth = getAuth();
-    onAuthStateChanged(auth, (user) => {
-        if (user) {
-            User.findOne({ uid: user.uid })
-                .then((result) => {
-                    rol = result.rol;
-                    if (result.ed == true) {
-                        res.render('profil', { user: user, rol: rol })
-                    } else {
-                        res.redirect('/mail-dogurla')
-                    }
-                }).catch((err) => {
-                    console.log(err);
-                });
-        } else {
-            res.redirect('giris-yap');
-        }
-    })
+    if (req.cookies.user) {
+        User.findOne({ uid: req.cookies.user.uid })
+            .then((result) => {
+                if (result.ed == true) {
+                    res.render('profil', { user: req.cookies.user, rol: result.rol })
+                } else {
+                    res.redirect('/mail-dogurla')
+                }
+            }).catch((err) => {
+                console.log(err);
+            });
+    } else {
+        res.redirect('giris-yap');
+    }
 })
 
 app2.get('/cikis-yap', (req, res) => {
     const auth = getAuth();
-    if (user) {
+    if (req.cookies.user) {
         signOut(auth).then(() => {
-            res.redirect('/giris-yap');
-            user = null
+            res.clearCookie('user');
+            res.redirect('/');
         }).catch((error) => {
             console.log(error);
-            res.send('hata oluştu lütfen daha sonra tekrar deneyin')
         });
-    } else {
-        res.redirect('/giris-yap');
     }
-
 })
 
 var kmg = 0;
@@ -255,7 +258,8 @@ var kmg = 0;
 var rsi = null;
 
 app2.get('/mail-dogurla', (req, res) => {
-    if (user) {
+    const auth = getAuth();
+    if (req.cookies.user) {
         User.findOne({ uid: user.uid })
             .then((result) => {
                 var ed = result.ed;
@@ -294,6 +298,7 @@ app2.get('/mail-dogurla', (req, res) => {
     } else {
         res.redirect('/giris-yap')
     }
+
 })
 
 app2.post('/mail-dogurla', (req, res) => {
@@ -326,7 +331,7 @@ app2.post('/kayit-ol', (req, res) => {
         const password = String(pass1)
         createUserWithEmailAndPassword(auth, email, password)
             .then((userCredential) => {
-                user = userCredential.user;
+                res.cookie('user', userCredential.user)
                 const users2 = new User({
                     uid: user.uid,
                     adi: kadi,
@@ -371,48 +376,20 @@ app2.post('/kayit-ol', (req, res) => {
 
 app2.get('/kayit-ol', (req, res) => {
     const auth = getAuth();
-    onAuthStateChanged(auth, (user) => {
-        if (user) {
-            const uid = user.uid;
-            res.redirect('/hesap');
-        } else {
-            res.render('kayit-ol', { hata: '' })
-        }
-    })
+    if (req.cookies.user) {
+        const uid = user.uid;
+        res.redirect('/hesap');
+    } else {
+        res.render('kayit-ol', { hata: '' })
+    }
 })
 
 app2.get('/giris-yap', (req, res) => {
-    const auth = getAuth();
-    onAuthStateChanged(auth, (user) => {
-        if (user) {
-            const uid = user.uid;
-            res.redirect('/hesap');
-        } else {
-            res.render('giris-yap');
-        }
-    })
-})
-
-app2.get('/list', (req, res) => {
-    const listAllUsers = (nextPageToken) => {
-        // List batch of users, 1000 at a time.
-        getAuth()
-            .listUsers(1000, nextPageToken)
-            .then((listUsersResult) => {
-                listUsersResult.users.forEach((userRecord) => {
-                    console.log('user', userRecord.toJSON());
-                });
-                if (listUsersResult.pageToken) {
-                    // List next batch of users.
-                    listAllUsers(listUsersResult.pageToken);
-                }
-            })
-            .catch((error) => {
-                console.log('Error listing users:', error);
-            });
-    };
-    // Start listing users from the beginning, 1000 at a time.
-    listAllUsers();
+    if (req.cookies.user) {
+        res.redirect('/hesap');
+    } else {
+        res.render('giris-yap');
+    }
 })
 
 app2.get('/giris-yap/sifremi-unuttum', (req, res) => {
@@ -441,8 +418,8 @@ app2.post('/giris-yap', (req, res) => {
     const auth = getAuth();
     signInWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
-            user = userCredential.user;
-            console.log(user);
+            console.log(userCredential.user);
+            res.cookie('user', userCredential.user)
             res.redirect('/hesap')
         })
         .catch((error) => {
@@ -453,35 +430,28 @@ app2.post('/giris-yap', (req, res) => {
         });
 })
 
-app2.get('/d', (req, res) => {
-    console.log(Date.now())
-})
-
 app2.get('/hesap', (req, res) => {
-    const auth = getAuth();
-    onAuthStateChanged(auth, (user) => {
-        if (user) {
-            User.findOne({ uid: user.uid })
-                .then((result) => {
-                    User.find({ ed: true }).sort({ createdAt: -1 })
-                        .then((result2) => {
-                            var ed = result.ed;
-                            if (ed == true) {
-                                res.render('hesap', { user: result, users: result2, msg: null })
-                            } else {
-                                res.redirect('/mail-dogurla')
-                            }
-                        }).catch((err) => {
+    if (req.cookies.user) {
+        User.findOne({ uid: req.cookies.user.uid })
+            .then((result) => {
+                User.find({ ed: true }).sort({ createdAt: -1 })
+                    .then((result2) => {
+                        var ed = result.ed;
+                        if (ed == true) {
+                            res.render('hesap', { user: result, users: result2, msg: null })
+                        } else {
+                            res.redirect('/mail-dogurla')
+                        }
+                    }).catch((err) => {
 
-                        });
+                    });
 
-                }).catch((err) => {
-                    console.log(err);
-                });
-        } else {
-            res.redirect('giris-yap');
-        }
-    })
+            }).catch((err) => {
+                console.log(err);
+            });
+    } else {
+        res.redirect('giris-yap');
+    }
 })
 
 app2.post('/hesap', (req, res) => {
@@ -496,16 +466,12 @@ app2.post('/hesap', (req, res) => {
 
 app2.get('/', (req, res) => {
     const auth = getAuth();
-    onAuthStateChanged(auth, (user) => {
-        if (user) {
-            const uid = user.uid;
-            res.redirect('/hesap');
-        } else {
-            res.render('index')
-        }
-    })
+    if (req.cookies.user) {
+        res.redirect('/hesap');
+    } else {
+        res.render('index')
+    }
 })
-
 
 app2.post('/create', (req, res) => {
     var veri = req.body.veri;
@@ -567,7 +533,6 @@ app2.post('/bv', (req, res) => {
 
 app2.put('/up', (req, res) => {
     var veri1 = req.body.veri;
-
     try {
         var up = {};
         up[`veriler/${veri1}/veri`] = veri1;
@@ -608,4 +573,3 @@ app2.delete('/delete', (req, res) => {
         })
     }
 })
-

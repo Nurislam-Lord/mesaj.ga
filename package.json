@@ -23,6 +23,7 @@
     "http": "^0.0.1-security",
     "mongoose": "^6.5.4",
     "nodemailer": "^6.7.8",
+    "os": "^0.1.2",
     "realm": "^10.20.0",
     "socket.io": "^4.5.2"
   }

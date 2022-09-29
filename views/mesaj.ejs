@@ -19,15 +19,15 @@
     <nav class="navbar2">
         <img class="ilogo" src="https://r.resimlink.com/g1DLbe9.png" alt="">
         <h1 class="logo">MESAJ GA</h1>
-        <input type="checkbox" id="menuBtn">
-        <label for="menuBtn" class="menuBtn">
+        <!-- <input type="checkbox" id="menuBtn"> -->
+        <label class="menuBtn" onclick="kac2();">
             <i class="fas fa-bars"></i>
         </label>
         <ul>
             <li><a class="etkin">Anasayfa</a></li>
             <li><a href="/iletisim">İletişim</a></li>
             <li><a class="dboxr" href="/profil">Profil</a></li>
-            <li><a href="/iletisim" class="bg-danger dboxr">Çıkış Yap</a></li>
+            <li><a href="/cikis-yap" class="bg-danger dboxr">Çıkış Yap</a></li>
             <li class="dboxl">
                 <label for="dbox">
                     <a style="text-transform: capitalize;" onclick="dbox()">
@@ -71,7 +71,8 @@
                 <button type="submit"><i class="fa-solid fa-paper-plane"></i></button>
             </form>
         </div>
-        <div class="kisi">
+        <div class="kisi" id="kisi">
+            <a href="/profil" class="profil">Profil</a><br>
             <% users.forEach(users2=> { %>
                 <% if(users2.uid !=user.uid){ %>
                     <a href="/mesaj/<%=users2.uid%>">
@@ -87,10 +88,19 @@
                         <% }) %>
         </div>
     </div>
-    <script src="https://mesaj.ga/socket.io/socket.io.js"></script>
     <script src="../index.js"></script>
+    <script src="http://localhost:8080/socket.io/socket.io.js"></script>
     <script>
-        let socket = io("https://mesaj.ga");
+        var kma2 = 0;
+        function kac2() {
+            if (kma2 % 2 === 0) {
+                document.getElementById('kisi').style.left = "0px";
+            } else if (kma2 % 2 === 1) {
+                document.getElementById('kisi').style.left = "-255px";
+            }
+            kma2 = kma2 + 1;
+        }
+        let socket = io("http://localhost:8080");
         const list = document.querySelector('.list')
         var kac = 0
         console.log('<%=user.uid%>');
