@@ -62,13 +62,13 @@ const User = mongoose.model('Users', userSchema)
 
 const MesajG = mongoose.model('MesajG', mesajSchema)
 
-server.listen(process.env.PORT || 8080, (Socket) => {
-    console.log('server çalışıyor');
-});
 // app2.listen(process.env.PORT || 8080, console.log('server çalışıyor'))
 const dbURL = 'mongodb+srv://nr:qwe123@mesajga.pumjten.mongodb.net/?retryWrites=true&w=majority'
 mongoose.connect(dbURL)
     .then((result) => {
+        server.listen(process.env.PORT || 8080, (Socket) => {
+            console.log('server çalışıyor');
+        });
     }).catch((err) => {
         console.log(err + ' mongodb hatası!');
     });
@@ -100,9 +100,7 @@ var kkb = 0;
 var sayiii = 0
 
 app2.get('/d', (req, res) => {
-    sayiii = sayiii + 1;
-    res.cookie('sayi', { sayiii })
-    res.redirect('/dd')
+    res.send(req.cookies.user.uid);
 })
 
 app2.get('/dd', (req, res) => {
@@ -112,58 +110,63 @@ app2.get('/dd', (req, res) => {
 var kkbb = 0;
 var uidg = null
 var uid = null
-
-io.on('connection', (socket) => {
-    console.log('kullanıcı bağlandı')
-    // const auth = getAuth();
-    socket.on('chat message', (msg) => {
-        const mesajk = new MesajG({
-            icerik: msg,
-            gid: uidg,
-            goid: uid
-        })
-        mesajk.save()
-            .then((result) => {
-                console.log('mesaj gönderildi');
-            }).catch((err) => {
-                console.log(err);
-            });
-    })
+app2.get('/', (req, res) => {
+    if (req.cookies.user) {
+        res.redirect('/hesap');
+    } else {
+        res.render('index')
+    }
 })
 
 app2.get('/mesaj/:uidg', (req, res) => {
     const auth = getAuth();
+    console.log(req.cookies.user.uid)
     if (req.cookies.user) {
-        uid = req.cookies.user.uid
-        uidg = req.params.uidg
         User.find()
             .then((result) => {
                 MesajG.find({ $or: [{ gid: req.params.uidg, goid: req.cookies.user.uid }, { gid: req.cookies.user.uid, goid: req.params.uidg }] })
                     .then((result2) => {
-                        console.log(result2);
                         res.render('mesaj', { mesajlar: result2, user: req.cookies.user, users: result })
+                        if (kkb == 0) {
+                            io.on('connection', (socket) => {
+                                socket.on('chat message', (msg) => {
+                                    console.log(req.cookies.user.uid);
+                                    var gidg = req.cookies.user.uid;
+                                    var goidg = req.params.uidg;
+                                    var mesajk = new MesajG({
+                                        icerik: msg,
+                                        gid: gidg,
+                                        goid: goidg
+                                    })
+                                    console.log(mesajk);
+                                    mesajk.save()
+                                        .then((result) => {
+                                            mesajk = null
+                                            gidg = null
+                                            goidg = null
+                                            console.log('mesaj gönderildi');
+                                        }).catch((err) => {
+                                            console.log(err);
+                                        })
+                                })
+                            })
+                            const userW = MesajG.watch()
+                            userW.on('change', change => {
+                                io.send(change.fullDocument);
+                                // console.log(change.fullDocument);
+                            })
+                            console.log('dinleniyor');
+                            kkb = kkb + 1;
+                        }
                     }).catch((err) => {
                         console.log(err);
                     })
-                if (kkbb == 0) {
-                    const userW = MesajG.watch()
-                    userW.on('change', change => {
-                        io.send(change.fullDocument);
-                        console.log(change.fullDocument);
-                    })
-                    console.log('dinleniyor');
-                }
-                kkbb = kkbb + 1;
             }).catch((err) => {
                 console.log(err);
             });
     } else {
         res.redirect('/giris-yap')
     }
-    io.on('chat message', (msg) => {
-        console.log('message: ' + msg);
-
-    });
 })
 
 app2.post('/profil', (req, res) => {
@@ -226,6 +229,7 @@ app2.post('/profil', (req, res) => {
     }
 })
 
+
 app2.get('/profil', (req, res) => {
     const auth = getAuth();
     if (req.cookies.user) {
@@ -255,22 +259,24 @@ app2.get('/cikis-yap', (req, res) => {
         });
     }
 })
-
-var kmg = 0;
 // var rsi = undefined;
 
 var rsi = null;
 
+const auth = getAuth();
 app2.get('/mail-dogurla', (req, res) => {
-    const auth = getAuth();
-    if (req.cookies.user) {
-        User.findOne({ uid: user.uid })
+    if (req.cookies.user != undefined) {
+        if (req.cookies.kmg == undefined) {
+            res.cookie('kmg', 0)
+        }
+        console.log('tamam');
+        User.findOne({ uid: req.cookies.user.uid })
             .then((result) => {
-                var ed = result.ed;
-                if (ed == true) {
+                if (result.ed == true) {
                     res.redirect('/hesap')
                 } else {
-                    if (kmg == 0) {
+                    console.log('tamam');
+                    if (req.cookies.kmg == 0) {
                         const transporter = nodemailer.createTransport({
                             service: 'hotmail',
                             auth: {
@@ -278,26 +284,35 @@ app2.get('/mail-dogurla', (req, res) => {
                                 pass: 'nurislam201031nr'
                             }
                         })
-                        rsi = Math.floor(Math.random() * 999999) + 100000;
-                        var mailOptions = {
-                            from: '"Mesaj GA e-posta doğurlama" <mesaj.ga-2@outlook.com>', // sender address (who sends)
-                            to: user.email,
-                            subject: 'Mesaj GA ',
-                            html: `<html><head><meta content="text/html; charset=UTF-8" http-equiv="content-type"><style type="text/css">@import url('https://themes.googleusercontent.com/fonts/css?kit=zG1kcrEyZe-emuvM05Bn4VW9cx0SXZIPZmvVkAldGl1LbhmlahuXTxY1PZSTtGE9S27OZw69yV-Nj9u5UPFguQ');ol{margin:0;padding:0}table td,table th{padding:0}.c13{border-right-style:solid;padding:7.8pt 7.8pt 7.8pt 7.8pt;border-bottom-color:#000000;border-top-width:3pt;border-right-width:3pt;border-left-color:#000000;vertical-align:top;border-right-color:#000000;border-left-width:3pt;border-top-style:solid;background-color:#ffffff;border-left-style:solid;border-bottom-width:3pt;width:141.7pt;border-top-color:#000000;border-bottom-style:solid}.c6{border-right-style:solid;padding:5pt 5pt 5pt 5pt;border-bottom-color:#000000;border-top-width:0pt;border-right-width:0pt;border-left-color:#000000;vertical-align:top;border-right-color:#000000;border-left-width:0pt;border-top-style:solid;background-color:#4a86e8;border-left-style:solid;border-bottom-width:0pt;width:585.4pt;border-top-color:#000000;border-bottom-style:solid}.c5{border-right-style:solid;padding:5pt 5pt 5pt 5pt;border-bottom-color:#00ffff;border-top-width:0pt;border-right-width:0pt;border-left-color:#00ffff;vertical-align:middle;border-right-color:#00ffff;border-left-width:0pt;border-top-style:solid;background-color:#444444;border-left-style:solid;border-bottom-width:0pt;width:595.4pt;border-top-color:#00ffff;border-bottom-style:solid}.c14{border-right-style:solid;padding:5pt 5pt 5pt 5pt;border-bottom-color:#000000;border-top-width:0pt;border-right-width:0pt;border-left-color:#000000;vertical-align:top;border-right-color:#000000;border-left-width:0pt;border-top-style:solid;border-left-style:solid;border-bottom-width:0pt;width:595.4pt;border-top-color:#000000;border-bottom-style:solid}.c12{color:#000000;font-weight:700;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:"Arial";font-style:normal}.c8{color:#000000;font-weight:500;text-decoration:none;vertical-align:baseline;font-size:17pt;font-family:"Comfortaa";font-style:normal}.c10{padding-top:0pt;padding-bottom:0pt;line-height:1.15;orphans:2;widows:2;text-align:left;height:11pt}.c9{color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:"Arial";font-style:normal}.c1{padding-top:0pt;padding-bottom:0pt;line-height:1.15;orphans:2;widows:2;text-align:center;height:11pt}.c17{-webkit-text-decoration-skip:none;font-weight:700;text-decoration:underline;text-decoration-skip-ink:none;font-size:17pt;font-family:"Comfortaa"}.c2{padding-top:0pt;padding-bottom:0pt;line-height:1.0;text-align:center;height:11pt}.c24{padding-top:0pt;padding-bottom:3pt;line-height:1.0;page-break-after:avoid;text-align:center}.c3{padding-top:0pt;padding-bottom:0pt;line-height:1.0;text-align:center}.c20{color:#7effff;font-weight:400;font-size:31pt;font-family:"Lobster"}.c4{margin-left:auto;border-spacing:0;border-collapse:collapse;margin-right:auto}.c0{font-size:23pt;font-family:"Caveat";color:#d9d9d9;font-weight:600}.c21{color:#000000;font-weight:700;font-size:17pt;font-family:"Comfortaa"}.c26{-webkit-text-decoration-skip:none;text-decoration:underline;text-decoration-skip-ink:none}.c22{text-decoration:none;vertical-align:baseline;font-style:italic}.c7{background-color:#00a88f00;max-width:595.4pt;padding:0pt 0pt 0pt 0pt}.c15{text-decoration:none;vertical-align:baseline;font-style:normal}.c25{font-size:17pt;font-family:"Comfortaa";font-weight:500}.c11{font-size:29pt;font-family:"Comfortaa";font-weight:700}.c16{color:black;text-decoration:inherit}.c23{height:50.9pt}.c18{height:0pt}.c19{text-indent:-70.9pt}.title{padding-top:0pt;color:#000000;font-size:26pt;padding-bottom:3pt;font-family:"Arial";line-height:1.15;page-break-after:avoid;orphans:2;widows:2;text-align:left}.subtitle{padding-top:0pt;color:#666666;font-size:15pt;padding-bottom:16pt;font-family:"Arial";line-height:1.15;page-break-after:avoid;orphans:2;widows:2;text-align:left}li{color:#000000;font-size:11pt;font-family:"Arial"}p{margin:0;color:#000000;font-size:11pt;font-family:"Arial"}h1{padding-top:20pt;color:#000000;font-size:20pt;padding-bottom:6pt;font-family:"Arial";line-height:1.15;page-break-after:avoid;orphans:2;widows:2;text-align:left}h2{padding-top:18pt;color:#000000;font-size:16pt;padding-bottom:6pt;font-family:"Arial";line-height:1.15;page-break-after:avoid;orphans:2;widows:2;text-align:left}h3{padding-top:16pt;color:#434343;font-size:14pt;padding-bottom:4pt;font-family:"Arial";line-height:1.15;page-break-after:avoid;orphans:2;widows:2;text-align:left}h4{padding-top:14pt;color:#666666;font-size:12pt;padding-bottom:4pt;font-family:"Arial";line-height:1.15;page-break-after:avoid;orphans:2;widows:2;text-align:left}h5{padding-top:12pt;color:#666666;font-size:11pt;padding-bottom:4pt;font-family:"Arial";line-height:1.15;page-break-after:avoid;orphans:2;widows:2;text-align:left}h6{padding-top:12pt;color:#666666;font-size:11pt;padding-bottom:4pt;font-family:"Arial";line-height:1.15;page-break-after:avoid;font-style:italic;orphans:2;widows:2;text-align:left}</style></head><body class="c7 doc-content"><p class="c10 c19"><span class="c9"></span></p><p class="c10"><span class="c9"></span></p><a id="t.6f98e2c1f1d4c5fbb4821c5446b2e1fa06221884"></a><a id="t.0"></a><table class="c4"><tr class="c23"><td class="c5" colspan="1" rowspan="1"><p class="c24 title" id="h.yv06plkxod4v"><span class="c15 c20">Mesaj GA</span></p></td></tr></table><p class="c1"><span class="c9"></span></p><a id="t.2684efd9acce6bb8d11b71425064e3131c73b207"></a><a id="t.1"></a><table class="c4"><tr class="c18"><td class="c14" colspan="1" rowspan="1"><p class="c3"><span class="c21 c22">Merhaba say&#305;n kullan&#305;c&#305;m&#305;z,</span></p><p class="c2"><span class="c15 c21"></span></p><p class="c3"><span class="c17"><a class="c16" href="https://mesaj.ga">Mesaj GA</a></span><span class="c25">&nbsp;kulland&#305;&#287;&#305;n&#305;z e posta adresini (${user.email}) do&#287;rulamak i&ccedil;in a&#351;a&#287;&#305;daki kodu girin.</span></p></td></tr></table><p class="c1"><span class="c9"></span></p><a id="t.f8453a92aba7ea9757d11151d1da801040de3653"></a><a id="t.2"></a><table class="c4"><tr class="c18"><td class="c13" colspan="1" rowspan="1"><p class="c3"><span class="c11">${rsi}</span></p></td></tr></table><p class="c1"><span class="c9"></span></p><p class="c1"><span class="c9"></span></p><a id="t.ecfa84f8f1b35a78519d87797ffb287ffc87f78f"></a><a id="t.3"></a><table class="c4"><tr class="c18"><td class="c14" colspan="1" rowspan="1"><p class="c3"><span class="c8">Bu kodu siz talep etmediyseniz bu postay&#305; dikkate almay&#305;n.</span></p><p class="c2"><span class="c8"></span></p><p class="c2"><span class="c8"></span></p><a id="t.1f21faa79b18276cd8cfa66ac41948c7885d4b8f"></a><a id="t.4"></a><table class="c4"><tr class="c18"><td class="c6" colspan="1" rowspan="1"><p class="c3"><span class="c0">Mesaj GA&rsquo;y&#305; ziyaret etmek i&ccedil;in </span><span class="c0 c26"><a class="c16" href="https://mesaj.ga">buraya</a></span><span class="c0">&nbsp;t&#305;klay&#305;n.</span></p></td></tr></table><p class="c2"><span class="c8"></span></p></td></tr></table><p class="c1"><span class="c9"></span></p></body></html>`
-                        }
-                        transporter.sendMail(mailOptions, function (error, info) {
-                            if (error) {
-                                return console.log(error);
-                            } else {
-                                console.log('Mail gönderildi!');
-                                kmg = kmg + 1;
-                                res.render('ed', { user: user })
+                        if (req.cookies.rsi == undefined) {
+                            var kod = Math.floor(Math.random() * 999999) + 100000;
+                            res.cookie('rsi', `${kod}`)
+                            console.log(kod);
+                            var mailOptions = {
+                                from: '"Mesaj GA e-posta doğurlama" <mesaj.ga-2@outlook.com>', // sender address (who sends)
+                                to: req.cookies.user.email,
+                                subject: 'Mesaj GA ',
+                                html: `<html><head><meta content="text/html; charset=UTF-8" http-equiv="content-type"><style type="text/css">@import url('https://themes.googleusercontent.com/fonts/css?kit=zG1kcrEyZe-emuvM05Bn4VW9cx0SXZIPZmvVkAldGl1LbhmlahuXTxY1PZSTtGE9S27OZw69yV-Nj9u5UPFguQ');ol{margin:0;padding:0}table td,table th{padding:0}.c13{border-right-style:solid;padding:7.8pt 7.8pt 7.8pt 7.8pt;border-bottom-color:#000000;border-top-width:3pt;border-right-width:3pt;border-left-color:#000000;vertical-align:top;border-right-color:#000000;border-left-width:3pt;border-top-style:solid;background-color:#ffffff;border-left-style:solid;border-bottom-width:3pt;width:141.7pt;border-top-color:#000000;border-bottom-style:solid}.c6{border-right-style:solid;padding:5pt 5pt 5pt 5pt;border-bottom-color:#000000;border-top-width:0pt;border-right-width:0pt;border-left-color:#000000;vertical-align:top;border-right-color:#000000;border-left-width:0pt;border-top-style:solid;background-color:#4a86e8;border-left-style:solid;border-bottom-width:0pt;width:585.4pt;border-top-color:#000000;border-bottom-style:solid}.c5{border-right-style:solid;padding:5pt 5pt 5pt 5pt;border-bottom-color:#00ffff;border-top-width:0pt;border-right-width:0pt;border-left-color:#00ffff;vertical-align:middle;border-right-color:#00ffff;border-left-width:0pt;border-top-style:solid;background-color:#444444;border-left-style:solid;border-bottom-width:0pt;width:595.4pt;border-top-color:#00ffff;border-bottom-style:solid}.c14{border-right-style:solid;padding:5pt 5pt 5pt 5pt;border-bottom-color:#000000;border-top-width:0pt;border-right-width:0pt;border-left-color:#000000;vertical-align:top;border-right-color:#000000;border-left-width:0pt;border-top-style:solid;border-left-style:solid;border-bottom-width:0pt;width:595.4pt;border-top-color:#000000;border-bottom-style:solid}.c12{color:#000000;font-weight:700;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:"Arial";font-style:normal}.c8{color:#000000;font-weight:500;text-decoration:none;vertical-align:baseline;font-size:17pt;font-family:"Comfortaa";font-style:normal}.c10{padding-top:0pt;padding-bottom:0pt;line-height:1.15;orphans:2;widows:2;text-align:left;height:11pt}.c9{color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:"Arial";font-style:normal}.c1{padding-top:0pt;padding-bottom:0pt;line-height:1.15;orphans:2;widows:2;text-align:center;height:11pt}.c17{-webkit-text-decoration-skip:none;font-weight:700;text-decoration:underline;text-decoration-skip-ink:none;font-size:17pt;font-family:"Comfortaa"}.c2{padding-top:0pt;padding-bottom:0pt;line-height:1.0;text-align:center;height:11pt}.c24{padding-top:0pt;padding-bottom:3pt;line-height:1.0;page-break-after:avoid;text-align:center}.c3{padding-top:0pt;padding-bottom:0pt;line-height:1.0;text-align:center}.c20{color:#7effff;font-weight:400;font-size:31pt;font-family:"Lobster"}.c4{margin-left:auto;border-spacing:0;border-collapse:collapse;margin-right:auto}.c0{font-size:23pt;font-family:"Caveat";color:#d9d9d9;font-weight:600}.c21{color:#000000;font-weight:700;font-size:17pt;font-family:"Comfortaa"}.c26{-webkit-text-decoration-skip:none;text-decoration:underline;text-decoration-skip-ink:none}.c22{text-decoration:none;vertical-align:baseline;font-style:italic}.c7{background-color:#00a88f00;max-width:595.4pt;padding:0pt 0pt 0pt 0pt}.c15{text-decoration:none;vertical-align:baseline;font-style:normal}.c25{font-size:17pt;font-family:"Comfortaa";font-weight:500}.c11{font-size:29pt;font-family:"Comfortaa";font-weight:700}.c16{color:black;text-decoration:inherit}.c23{height:50.9pt}.c18{height:0pt}.c19{text-indent:-70.9pt}.title{padding-top:0pt;color:#000000;font-size:26pt;padding-bottom:3pt;font-family:"Arial";line-height:1.15;page-break-after:avoid;orphans:2;widows:2;text-align:left}.subtitle{padding-top:0pt;color:#666666;font-size:15pt;padding-bottom:16pt;font-family:"Arial";line-height:1.15;page-break-after:avoid;orphans:2;widows:2;text-align:left}li{color:#000000;font-size:11pt;font-family:"Arial"}p{margin:0;color:#000000;font-size:11pt;font-family:"Arial"}h1{padding-top:20pt;color:#000000;font-size:20pt;padding-bottom:6pt;font-family:"Arial";line-height:1.15;page-break-after:avoid;orphans:2;widows:2;text-align:left}h2{padding-top:18pt;color:#000000;font-size:16pt;padding-bottom:6pt;font-family:"Arial";line-height:1.15;page-break-after:avoid;orphans:2;widows:2;text-align:left}h3{padding-top:16pt;color:#434343;font-size:14pt;padding-bottom:4pt;font-family:"Arial";line-height:1.15;page-break-after:avoid;orphans:2;widows:2;text-align:left}h4{padding-top:14pt;color:#666666;font-size:12pt;padding-bottom:4pt;font-family:"Arial";line-height:1.15;page-break-after:avoid;orphans:2;widows:2;text-align:left}h5{padding-top:12pt;color:#666666;font-size:11pt;padding-bottom:4pt;font-family:"Arial";line-height:1.15;page-break-after:avoid;orphans:2;widows:2;text-align:left}h6{padding-top:12pt;color:#666666;font-size:11pt;padding-bottom:4pt;font-family:"Arial";line-height:1.15;page-break-after:avoid;font-style:italic;orphans:2;widows:2;text-align:left}</style></head><body class="c7 doc-content"><p class="c10 c19"><span class="c9"></span></p><p class="c10"><span class="c9"></span></p><a id="t.6f98e2c1f1d4c5fbb4821c5446b2e1fa06221884"></a><a id="t.0"></a><table class="c4"><tr class="c23"><td class="c5" colspan="1" rowspan="1"><p class="c24 title" id="h.yv06plkxod4v"><span class="c15 c20">Mesaj GA</span></p></td></tr></table><p class="c1"><span class="c9"></span></p><a id="t.2684efd9acce6bb8d11b71425064e3131c73b207"></a><a id="t.1"></a><table class="c4"><tr class="c18"><td class="c14" colspan="1" rowspan="1"><p class="c3"><span class="c21 c22">Merhaba say&#305;n kullan&#305;c&#305;m&#305;z,</span></p><p class="c2"><span class="c15 c21"></span></p><p class="c3"><span class="c17"><a class="c16" href="https://mesaj.ga">Mesaj GA</a></span><span class="c25">&nbsp;kulland&#305;&#287;&#305;n&#305;z e posta adresini (${req.cookies.user.email}) do&#287;rulamak i&ccedil;in a&#351;a&#287;&#305;daki kodu girin.</span></p></td></tr></table><p class="c1"><span class="c9"></span></p><a id="t.f8453a92aba7ea9757d11151d1da801040de3653"></a><a id="t.2"></a><table class="c4"><tr class="c18"><td class="c13" colspan="1" rowspan="1"><p class="c3"><span class="c11">${kod}</span></p></td></tr></table><p class="c1"><span class="c9"></span></p><p class="c1"><span class="c9"></span></p><a id="t.ecfa84f8f1b35a78519d87797ffb287ffc87f78f"></a><a id="t.3"></a><table class="c4"><tr class="c18"><td class="c14" colspan="1" rowspan="1"><p class="c3"><span class="c8">Bu kodu siz talep etmediyseniz bu postay&#305; dikkate almay&#305;n.</span></p><p class="c2"><span class="c8"></span></p><p class="c2"><span class="c8"></span></p><a id="t.1f21faa79b18276cd8cfa66ac41948c7885d4b8f"></a><a id="t.4"></a><table class="c4"><tr class="c18"><td class="c6" colspan="1" rowspan="1"><p class="c3"><span class="c0">Mesaj GA&rsquo;y&#305; ziyaret etmek i&ccedil;in </span><span class="c0 c26"><a class="c16" href="https://mesaj.ga">buraya</a></span><span class="c0">&nbsp;t&#305;klay&#305;n.</span></p></td></tr></table><p class="c2"><span class="c8"></span></p></td></tr></table><p class="c1"><span class="c9"></span></p></body></html>`
                             }
-                        })
+                            kod = undefined
+                            transporter.sendMail(mailOptions, function (error, info) {
+                                if (error) {
+                                    return console.log(error);
+                                } else {
+                                    res.clearCookie('kmg')
+                                    res.cookie('kmg', 1)
+                                    console.log('Mail gönderildi!');
+                                    res.render('ed', { user: req.cookies.user })
+                                }
+                            })
+                        }
+                    } else {
+                        res.render('ed', { user: req.cookies.user })
                     }
                 }
             }).catch((err) => {
                 console.log(err);
+                console.log("mongodb'de kullanıcı bulunamadı");
             })
     } else {
         res.redirect('/giris-yap')
@@ -306,11 +321,10 @@ app2.get('/mail-dogurla', (req, res) => {
 })
 
 app2.post('/mail-dogurla', (req, res) => {
-    var edkod = req.body.kod;
-    console.log(rsi);
-    if (Number(edkod) == Number(rsi)) {
+    console.log(req.cookies.rsi);
+    if (Number(req.body.kod) == Number(req.cookies.rsi)) {
         try {
-            User.updateOne({ uid: user.uid }, { ed: true })
+            User.updateOne({ uid: req.cookies.user.uid }, { ed: true })
                 .then((result) => {
                     res.redirect('/hesap')
                 }).catch((err) => {
@@ -335,9 +349,8 @@ app2.post('/kayit-ol', (req, res) => {
         const password = String(pass1)
         createUserWithEmailAndPassword(auth, email, password)
             .then((userCredential) => {
-                res.cookie('user', userCredential.user)
                 const users2 = new User({
-                    uid: user.uid,
+                    uid: userCredential.user.uid,
                     adi: kadi,
                     purl: 'https://cdn-icons-png.flaticon.com/512/3001/3001758.png',
                     ed: false,
@@ -354,15 +367,12 @@ app2.post('/kayit-ol', (req, res) => {
                 updateProfile(auth.currentUser, {
                     displayName: kadi, photoURL: 'https://cdn-icons-png.flaticon.com/512/3001/3001758.png'
                 }).then(() => {
-                    console.log('başarılı');
-                    console.log('adı: ', kadi);
+                    res.cookie('user', userCredential.user)
                     res.redirect('/hesap')
-                    return res.status(200)
                 }).catch((error) => {
-                    res.redirect('/hesap')
                     console.log(error);
+                    res.redirect('/hesap')
                 });
-                console.log(user);
             })
             .catch((error) => {
                 const errorCode = error.code;
@@ -378,10 +388,10 @@ app2.post('/kayit-ol', (req, res) => {
     }
 })
 
+
 app2.get('/kayit-ol', (req, res) => {
     const auth = getAuth();
     if (req.cookies.user) {
-        const uid = user.uid;
         res.redirect('/hesap');
     } else {
         res.render('kayit-ol', { hata: '' })
@@ -389,7 +399,7 @@ app2.get('/kayit-ol', (req, res) => {
 })
 
 app2.get('/giris-yap', (req, res) => {
-    if (req.cookies.user) {
+    if (req.cookies.user != undefined) {
         res.redirect('/hesap');
     } else {
         res.render('giris-yap');
@@ -416,14 +426,13 @@ app2.post('/giris-yap/sifremi-unuttum', (req, res) => {
 })
 
 app2.post('/giris-yap', (req, res) => {
-
     const email = req.body.email;
     const password = req.body.pass;
     const auth = getAuth();
     signInWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
-            console.log(userCredential.user);
             res.cookie('user', userCredential.user)
+            res.cookie('kmg', 0)
             res.redirect('/hesap')
         })
         .catch((error) => {
@@ -435,26 +444,25 @@ app2.post('/giris-yap', (req, res) => {
 })
 
 app2.get('/hesap', (req, res) => {
-    if (req.cookies.user) {
+    if (req.cookies.user != undefined) {
         User.findOne({ uid: req.cookies.user.uid })
             .then((result) => {
                 User.find({ ed: true }).sort({ createdAt: -1 })
                     .then((result2) => {
-                        var ed = result.ed;
-                        if (ed == true) {
+                        if (result.ed == true) {
                             res.render('hesap', { user: result, users: result2, msg: null })
                         } else {
                             res.redirect('/mail-dogurla')
                         }
                     }).catch((err) => {
-
+                        console.log(err);
                     });
 
             }).catch((err) => {
                 console.log(err);
             });
     } else {
-        res.redirect('giris-yap');
+        res.redirect('/giris-yap');
     }
 })
 
@@ -468,14 +476,6 @@ app2.post('/hesap', (req, res) => {
     });
 })
 
-app2.get('/', (req, res) => {
-    const auth = getAuth();
-    if (req.cookies.user) {
-        res.redirect('/hesap');
-    } else {
-        res.render('index')
-    }
-})
 
 app2.post('/create', (req, res) => {
     var veri = req.body.veri;

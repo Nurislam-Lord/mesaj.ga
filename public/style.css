@@ -654,8 +654,8 @@ nav ul li a:hover{
     padding-left: 10px;
     display: block;
     text-align: left;
+    overflow: auto;
     left: 0px;
-    overflow-x: auto;
     height: calc(100vh - 80px);
     width: 250px;
     background-color: rgba(0, 0, 0, 0.65);
@@ -737,9 +737,9 @@ nav ul li a:hover{
 }
 
 @media (max-width:740px){
-     #mesaji{
-        width: 250px;
-    } 
+    /* #mesaji{
+        width: 200px;
+    } */
 
     .hesap{
         width: 100vw;

@@ -73,7 +73,6 @@
         </div>
         <div class="kisi" id="kisi">
             <a href="/profil" class="profil">Profil</a><br>
-            <a href="/cikis-yap" class="profil">Çıkış Yap</a><br>
             <% users.forEach(users2=> { %>
                 <% if(users2.uid !=user.uid){ %>
                     <a href="/mesaj/<%=users2.uid%>">
@@ -90,7 +89,7 @@
         </div>
     </div>
     <script src="../index.js"></script>
-    <script src="https://mesaj.ga/socket.io/socket.io.js"></script>
+    <script src="http://localhost:8080/socket.io/socket.io.js"></script>
     <script>
         var kma2 = 0;
         function kac2() {
@@ -101,7 +100,7 @@
             }
             kma2 = kma2 + 1;
         }
-        let socket = io("https://mesaj.ga");
+        let socket = io("http://localhost:8080");
         const list = document.querySelector('.list')
         var kac = 0
         console.log('<%=user.uid%>');
