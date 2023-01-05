@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="tr-TR">
+
+<head>
+    <%- include('src/head') %>
+</head>
+
+<body>
+    <div class="beyazlik" id="beyazlik">
+        <div class="loader"></div><br>
+        <h1>Yükleniyor...</h1>
+    </div>
+    <%- include('src/navbar') %>
+        <div class="container">
+            <br>
+            <br>
+            <br>
+            <!-- <div class="farkli-s" id="google-button">
+                <i class="fa-brands fa-google"></i>
+                Google ile kayıt ol
+            </div>
+            <br>
+            <div class="or">
+                <span class="çizgi"></span>
+                <h3 class="veya">veya</h3>
+                <span class="çizgi"></span>
+            </div> -->
+            <br>
+            <div id="mail-sor">
+                <div class="eposta clearfix">
+                    <input type="email" name="email" placeholder="E-posta" class="input" autocomplete="off" id="email">
+                    <br>
+                    <label for="email" class="input-label">E-posta</label>
+                </div>
+                <br>
+                <button class="next" onclick="next('email')">Sonraki</button>
+            </div>
+            <div id="ad-sor">
+                <div class="ad clearfix">
+                    <input type="text" name="ad" placeholder="İsim" class="input" autocomplete="off" id="ad" required>
+                    <br>
+                    <label for="ad" class="input-label">İsim</label>
+                </div>
+                <br>
+                <button class="next" id="next" onclick="next('ad')">Sonraki</button>
+            </div>
+            <div id="sifre-sor">
+                <div class="sifre clearfix">
+                    <input type="password" name="sifre" placeholder="Şifre" class="input" autocomplete="off" id="sifre"
+                        required>
+                    <br>
+                    <label for="sifre" class="input-label">Şifre</label>
+                </div>
+                <br>
+                <button class="next" id="next" type="submit" onclick="next('sifre')">Onayla</button>
+            </div>
+        </div>
+        <script src="https://kit.fontawesome.com/814bf03a7c.js" crossorigin="anonymous"></script>
+        <script src="index.js"></script>
+        <script src="/socket.io/socket.io.js"></script>
+        <script>
+            var socket = io();
+            var modeDark = false
+            if (modeDark == false) {
+                document.getElementById('styles').href = 'style.css';
+            }
+            var form = document.getElementById('form');
+            var input = document.getElementById('ad');
+            var beyazlik = document.getElementById('beyazlik');
+
+            var mail = undefined;
+            var ad = undefined;
+            function next(veri) {
+                var desta = document.getElementById(veri).value;
+                if (desta != '' && desta != ' ') {
+                    if (veri == 'email') {
+                        var ms = document.getElementById('mail-sor');
+                        var as = document.getElementById('ad-sor');
+                        var fs = document.getElementsByClassName('farkli-s');
+                        var or = document.getElementsByClassName('or');
+                        ms.style.display = 'none';
+                        as.style.display = 'block';
+                        for (let i = 0; i < or.length; i++) {
+                            or[i].style.display = 'none';
+                        }
+                        for (let i = 0; i < fs.length; i++) {
+                            fs[i].style.display = 'none';
+                        }
+                        mail = desta;
+                    } else if (veri == 'ad') {
+                        var as = document.getElementById('ad-sor');
+                        var ss = document.getElementById('sifre-sor');
+                        as.style.display = 'none';
+                        ss.style.display = 'block';
+                        ad = desta;
+                    } else {
+                        sifre = desta;
+                        if (desta) {
+                            let xhr = new XMLHttpRequest();
+                            xhr.open("POST", "/kayit-ol");
+                            xhr.setRequestHeader("Accept", "application/json");
+                            xhr.setRequestHeader("Content-Type", "application/json");
+
+                            // xhr.onreadystatechange = function () {
+                            //     if (xhr.readyState === 4) {
+                            //         console.log(xhr.status);
+                            //         console.log(xhr.responseText);
+                            //     }
+                            // };
+                            const id = 12345
+                            const ad2 = ad
+                            let data = `{
+                                "ad": "${ad}",
+                                "mail": "${mail}",
+                                "sifre": "${desta}"
+                            }`;
+
+                            xhr.send(data);
+                            // socket.emit('ad', { "ad": ad, "mail": mail, 'sifre': sifre });
+                            beyazlik.style.display = 'flex';
+                            socket.on('link url', function (url) {
+                                window.location.href = url
+                            });
+                        }
+                    }
+                }
+            }
+            window.onload = function () {
+                beyazlik.style.display = "none";
+            }
+        </script>
+</body>
+
+</html>

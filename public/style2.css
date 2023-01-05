@@ -1,0 +1,229 @@
+@import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@500&display=swap');
+
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-family: 'Comfortaa', cursive;
+}
+
+#resim-yukle-div{
+    text-align: left;
+    background-color: white;
+    margin: auto;
+    padding: 40px 40px;
+    border-radius: 10px;
+    position: relative;
+}
+
+#ad-kutu{
+    font-size: 23px;
+    border: solid 2px #808080;
+}
+
+#ad-kutu:focus{
+    border: solid 2px #2A58AD;
+}
+
+#resim-sec-btn{
+    background-color: #2A58AD;
+    color: whitesmoke;
+    padding: 10px 30px;
+    border-radius: 99px;
+    cursor: pointer;
+    font-size: 25px;
+    transition: all 0.3s;
+    width: 60%;
+    display: block;
+    text-align: center;
+}
+
+#resim-sec-btn:active{
+    background-color: #2a58adbe;
+}
+
+#resimim{
+    width: 200px;
+    height: 200px;
+    border: solid 4px #2A58AD;
+    border-radius: 999px;
+    cursor: pointer;
+}
+
+#resim-yuk{
+    background-color: #2aad31;
+    /* display: none; */
+    color: whitesmoke;
+    padding: 10px 30px;
+    border-radius: 99px;
+    cursor: pointer;
+    font-size: 25px;
+    border: none;
+    transition: all 0.3s;
+    width: 60%;
+    margin: auto;
+}
+
+#resim-yuk:active{
+    background-color: #2a58adbe;
+}
+
+#upprogges{
+    width: 0px;
+    height: 25px;
+    background-color: #2A58AD;
+    border-radius: 99px;
+    display: inline-block;
+    transition: all 0.75s;
+}
+
+#upu{
+    text-align: left;
+    display: none;
+    width: 203px;
+    height: 29px;
+    background-color: rgb(201, 201, 201);
+    border: solid 2px #2A58AD;
+    border-radius: 99px;
+}
+
+.ui-btn{
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+}
+
+#siyahlik-ui {
+    background-color: rgba(0, 0, 0, 0.65);
+    width: 200px;
+    border-radius: 999px;
+    height: 200px;
+    position: absolute;
+    opacity: 0%;
+    transition: 0.3s;
+}
+
+.pencil{
+    font-size: 56px;
+    position: absolute;
+    margin: auto;
+    z-index: 1;
+    color: rgb(240, 240, 240);
+    top: calc(50% - 28px);
+    left: calc(50% - 28px);
+    opacity: 0%;
+    transition: 0.3s;
+}
+
+#siyahlik-ui:hover {
+    opacity: 100%;
+}
+
+#siyahlik-ui:hover>div>.pencil {
+    opacity: 100%;
+}
+
+#sil-br{
+    display: none;
+}
+
+.sol{
+    display: inline-block;
+    padding: 50px;
+    float: left;
+}
+
+.sag{
+    display: inline-block;
+    width: calc(100vw - 315px);
+    float: right;
+    padding: 50px 0px;
+}
+
+#input-ad{
+    border: solid 2px rgb(172, 172, 172);
+    padding: 10px 40px 10px 20px;
+    border-radius: 99px;
+    width: 350px;
+    font-size: 23px;
+}
+
+.edit{
+    font-size: 23px;
+    margin-left: -40px;
+    cursor: pointer;
+}
+
+.p-kaydet{
+    font-size: 25px;
+    padding: 10px 45px;
+    outline: none;
+    background: none;
+    min-width: 200px;
+    border-radius: 100px;
+    border: solid 2px #2A58AD;
+    cursor: pointer;
+    height: 50px;
+    position: relative;
+    transition: all 0.5s linear;
+}
+
+.p-kaydet:hover{
+    color: whitesmoke
+}
+
+.p-kaydet::before{
+    content: "";
+    position: absolute;
+    top: -0.01rem;
+    left: 0;
+    width: 0%;
+    height: 100%;
+    background: #2A58AD;
+    border-radius: 20px;
+    z-index: -1;
+    /* transform-origin: 0 0;
+    transform: translateX(0); */
+    transition: all 0.5s cubic-bezier(1, 0.05, 0, 0.93);
+}
+
+.p-kaydet:hover::before{
+    width: 100%;
+}
+
+.p-kaydet:active::before{
+    width: 100%;
+    background-color: #2A58AD;
+    transition: 0s !important;
+}
+
+.p-kaydet:active{
+    color: var(--tc);
+    transition: 0s !important;
+    border: solid 2px #2a58addc;
+}
+
+#geri-btn{
+    cursor: pointer;
+    background-color: #2A58AD;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    padding: 7px;
+    border-radius: 99px;
+    width: 40px;
+    height: 40px;
+    transition: all 0.3s;
+}
+
+#geri-btn:active {
+    background-color: #2A58ADdc;
+} 
+
+.geri{
+    font-size: 22px;
+    color: whitesmoke;
+}

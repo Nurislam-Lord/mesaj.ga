@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="tr-TR">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%=title%></title>
+      <link href="/style.css" rel="stylesheet" id="styles">
+      <script
+        src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+      <link rel="preconnect" href="https://fonts.googleapis.com"><link
+        rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link
+        href="https://fonts.googleapis.com/css2?family=Comfortaa&family=Fjalla+One&family=Kodchasan:wght@700&family=Roboto+Condensed&family=Sevillana&display=swap"
+        rel="stylesheet">
+      <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css"
+        integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+      <body style="overflow: hidden;">
+        <div class="yanbar" style="overflow-x: hidden !important;">
+          <ul>
+            <a href="/ayarlar">
+              <li>
+                <img style="border: none;"
+                  src="https://cdn-icons-png.flaticon.com/512/3098/3098120.png"
+                  alt=""><span style="text-transform:
+                  capitalize;">Ayarlar</span>
+              </li>
+            </a>
+            <li onclick="acPostSy()"><img
+                src="https://cdn-icons-png.flaticon.com/512/1828/1828753.png"
+                alt=""><span style="text-transform:
+                capitalize;">Kişi ekle</span></li>
+            <% users.forEach(user1=> { %>
+              <% if(user1._id != user._id) { %>
+                <% if(user1.rehberId == user._id){ %>
+                  <a href="/mesaj/<%=user1.eklenenId%>">
+                    <li><img src="<%=user1.eklenenImgUrl%>"
+                      alt=""><span style="text-transform:
+                        capitalize;"><%=user1.eklenenAd%></span></li>
+                    </a>
+                    <% } else { %>
+                      <a href="/mesaj/<%=user1.rehberId%>">
+                        <li><img src="<%=user1.rehberImgUrl%>"
+                          alt=""><span
+                            style="text-transform:
+                            capitalize;"><%=user1.rehberAd%></span></li>
+                        </a>
+                        <% } %>
+                          <% } %>
+                            <% }) %>
+          </ul>
+          </div>
+          <div id="post-bg">
+            <form action=""
+              method="post"
+              class="post-form">
+              <input type="email" name="mail" required class="input" placeholder="E-posta" style="font-size: 25px;" autocomplete="off">
+              <br><br>
+              <button type="button" id="kpt-btn">Kapat</button>
+              <button type="submit" id="tmm-btn">Tamam</button>
+            </form>
+          </div>
+          <div class="head-mesaj">
+            <span>
+              <img src="<%=userk.imgUrl%>">
+              <h1><%=userk.ad%></h1>
+            </span>
+            <a href="/profil/<%=userk.mail%>">Profil <i class="fas fa-user"></i></a>
+          </div>
+          <div class="container-mesaj">
+            <div class="mesajlar" id="mesajlar">
+              <% mesajlar.forEach(mesaj => { %>
+                <% if(mesaj.gonderenId == user._id){ %>
+                  <div class="mdb">
+                    <div class="mesajb"><%=mesaj.icerik%></div>
+                  </div>
+                <% } else { %>
+                  <div class="md">
+                    <div class="mesaj"><%=mesaj.icerik%></div>
+                  </div>
+                <% } %>                  
+              <% }) %>
+            </div>
+            <div class="mg-div">
+              <input type="text" onkeypress="bastin(event)" placeholder="Mesajınızı girin" class="mg-input" id="mg-input">
+              <button type="submit" class="mg-btn" onclick="mg()">
+                <i class="fa-solid fa-paper-plane"></i>
+              </button>
+            </div>
+          </div>
+        <script src="/socket.io/socket.io.js"></script>
+        <script>
+            var ks = 6;
+            var mgInput = document.getElementById('mg-input')
+            var mesajlar = document.getElementById('mesajlar')
+            mesajlar.scrollBy(0, mesajlar.scrollHeight)
+            var socket = io();
+            var postBtn = document.getElementById('post-bg');
+            var kptBtn = document.getElementById('kpt-btn');
+            var mesaj = ""
+
+            socket.on('message', function(msg) {
+              console.log(msg);
+              if (msg.gonderenId == "<%=user._id%>") {
+                var eklecekM = `<div class="mdb"><div class="mesajb">${msg.icerik}</div></div>`
+                mesajlar.innerHTML = mesajlar.innerHTML + eklecekM;
+                mesajlar.scrollBy(0, mesajlar.scrollHeight)
+              } else {
+                var eklecekM = `<div class="md"><div class="mesaj">${msg.icerik}</div></div>`
+                mesajlar.innerHTML = mesajlar.innerHTML + eklecekM;
+                mesajlar.scrollBy(0, mesajlar.scrollHeight)
+              }
+            });
+            
+            if (modeDark == false) {
+                document.getElementById('styles').href = 'style.css';
+            }
+
+            function bastin(e) {
+              if (e.keyCode == 13) {
+                mg()
+              }
+            }
+
+            function acPostSy() {
+                postBtn.style.display = "flex";
+            }
+            
+            function ksaaa() {
+              if (ks != 0) {
+                ks = ks - 1
+                setTimeout(ksaaa, 1000)
+                mgInput.disabled = true
+                mgInput.value = `Lütfen ${ks} saniye bekleyin!`
+                mgInput.style.color = "darkred"
+              } else {
+                mgInput.style.color = "black";
+                mgInput.value = "";
+                mgInput.disabled = false
+                ks = 6
+              }
+            }
+            
+            
+            function mg() {
+              mesaj = document.getElementById('mg-input').value
+              if (ks == 0) {
+                
+              }
+              if (mesaj != "" && mesaj.split(" ")[0] != "") {
+                  var mesajg = { gonderenId: "<%=user._id%>", gidenId: "<%=userk._id%>", icerik: mesaj }
+                  socket.emit('chat message', mesajg);
+                  document.getElementById('mg-input').value = '';
+                  ksaaa()
+                }
+            }
+        </script>
+      </body>
+</html>

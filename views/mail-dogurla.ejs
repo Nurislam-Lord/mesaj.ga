@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="tr-TR">
+
+    <head>
+        <%- include('src/head') %>
+        </head>
+
+        <body>
+            <%- include('src/navbar') %>
+                <%- include('src/load') %>
+                    <% if(hata !=undefined){ %>
+                        <div class="alert-bg2">
+                            <div class="alert-window2">
+                                <lottie-player
+                                    src="https://assets8.lottiefiles.com/packages/lf20_qpwbiyxf.json"
+                                    background="transparent" speed="1.5"
+                                    style="width: 200px; height: 200px; margin:
+                                    auto;" autoplay loop>
+                                </lottie-player>
+                                <h1>Hata!</h1>
+                                <p style="font-size: 20px;"><%=hata%></p>
+                                    <button class="tmm-btn">tamam</button>
+                                </div>
+                            </div>
+                            <% } %>
+                                <div class="container">
+                                    <br>
+                                    <br>
+                                    <br>
+                                    <div class="email-img-div">
+                                        <img
+                                            src="https://cdn.jsdelivr.net/gh/Nurislam-Lord/images@main/email.svg"
+                                            alt="">
+                                    </div>
+                                    <div class="form-giris-dis">
+                                        <form action="" method="post"
+                                            style="overflow: hidden; width:
+                                            329px; position: relative; display:
+                                            flex; flex-direction: column;">
+                                            <h2>Epostanızı doğurlayın!</h2><br>
+                                            <p>E-postanıza (<%=user.mail%>) bir
+                                                    kod gönderdik. Lütfen
+                                                    aşağıya kodu girin.</p>
+                                                <input style="margin: 20px 0px;"
+                                                    name="kod" type="number"
+                                                    required
+                                                    class="input"
+                                                    autocomplete="off" maxlength="2"
+                                                    placeholder="Kodu girin"onkeydown="limit(this);" onkeyup="limit(this);">
+                                                <button class="sonraki-btn"
+                                                    type="submit">Sonraki</button>
+                                                <br>
+                                                <h3 id="bilgi"></h3>
+                                                <button class="tg-btn"
+                                                    type="button">Tekrar gönder</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                                <link rel="stylesheet"
+                                    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css"
+                                    integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w=="
+                                    crossorigin="anonymous"
+                                    referrerpolicy="no-referrer" />
+                                <script src="index.js"></script>
+                                <script src="/socket.io/socket.io.js"></script>
+                                <script src="https://smtpjs.com/v3/smtp.js"></script>
+                                <script>
+                var socket = io();
+                var modeDark = false
+                if (modeDark == false) {
+                    document.getElementById('styles').href = 'style.css';
+                }
+                var bilgi = document.getElementById('bilgi');
+                var sifreInput = document.getElementsByClassName('input')[1];
+                var nextBtn = document.getElementsByClassName('sonraki-btn')[0];
+                var tgBtn = document.getElementsByClassName('tg-btn')[0];
+                var ksk = 60;
+                function limit(element){
+                    var max_chars = 6;
+                        
+                    if(element.value.length > max_chars) {
+                        element.value = element.value.substr(0, max_chars);
+                    }
+                }
+                setTimeout(azalt, 1000)
+                bilgi.innerText=`Tekrar doğurlama kodu göndermek için ${ksk} saniye kaldı.`
+                function azalt(){
+                    if (ksk != 0) {                        
+                        ksk = ksk - 1;
+                        bilgi.innerText=`Tekrar doğurlama kodu göndermek için ${ksk} saniye kaldı.`
+                        setTimeout(azalt, 1000)
+                    } else {
+                        bilgi.innerText='';
+                        tgBtn.style.display="block";
+                    }
+                }
+                tgBtn.onclick = function(){
+                    gonder()
+                    ksk = 60;
+                    tgBtn.style.display= 'none';
+                    bilgi.innerText=`Tekrar doğurlama kodu göndermek için ${ksk} saniye kaldı.`
+                    setTimeout(azalt, 1000)
+                }
+                if (!getCookie("kod")) {
+                    var kod = Math.floor(Math.random() * 999999) + 100000;
+                    document.cookie = `kod = ${kod}`;
+                    gonder()
+                }
+                function gonder() {
+                    var kod2 = getCookie('kod')
+                    Email.send({
+                    Host : "smtp.elasticemail.com",
+                    Username : "mail@mesaj.ga",
+                    Password : "8E0A120BD200292EDC90C04EC7B3BF875713",
+                    To : '<%=user.mail%>',
+                    From : "mail@mesaj.ga",
+                    Subject : "Mesaj",
+                    Body : `<!DOCTYPE html><html lang="tr"><head><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Caramel&family=Titillium+Web:wght@300&display=swap" rel="stylesheet"><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>E-posta</title></head><body style="padding: 0;margin: 0;box-sizing: border-box;font-family: 'Titillium Web', sans-serif;text-align: center;background-color: rgb(233, 233, 233);"><div style="background-color: #5550ac;padding: 1px 0px;"><a style="text-decoration: none;" href="https://mesaj.ga" target="_blank" rel="noopener noreferrer"><h1 style="font-family: 'Caramel', serif;color: #d5d3ee;user-select: none;font-size:40px;">Mesaj.GA</h1></a></div><br><h1 style="font-size: 30px;color: #4f499c;">E-posta Doğurlama</h1><br><div style="text-align: left;width: 650px;background-color: white;border-radius: 7px;margin: auto;padding: 25px;"><p style="padding: 0;margin: 0;box-sizing: border-box;font-family: 'Titillium Web', sans-serif;font-size: 20px;color: rgb(122, 122, 122);">Merahaba sayın <%=user.ad%> !</p><br><p style="padding: 0;margin: 0;box-sizing: border-box;font-family: 'Titillium Web', sans-serif;font-size: 20px;color: rgb(122, 122, 122);"><a style="color: #6D67E4;font-weight: 600;text-decoration: none;" href="http://mesaj.ga" target="_blank" rel="noopener noreferrer">Mesaj.ga</a> için kullandığınız epostanızı (<a style="color: #6D67E4;font-weight: 600;text-decoration: none;" href="mailto:<%=user.mail%>"><%=user.mail%></a>) doğurlamak için lütfen aşğıdaki kodu girin. Lütfen kodu kimseyle paylaşmayın!</p><br><div style="background-color: white;width: 150px;margin: auto;border: solid 5px #6D67E4;border-radius: 10px;background-color: #d5d3ee;text-align: center;"><h1 style="color: #453C67;user-select: all;">${kod2}</h1></div><br><p style="padding: 0;margin: 0;box-sizing: border-box;font-family: 'Titillium Web', sans-serif;font-size: 20px;color: rgb(122, 122, 122);">Bu kodu siz istemediyseniz bu e-postayı dikkate almayın.</p></div><br><p style="padding: 0;margin: 0;box-sizing: border-box;font-family: 'Titillium Web', sans-serif;font-size: 20px;color: rgb(122, 122, 122);">&copy; 2022 Mesaj.GA</p></body></html>`
+                })
+            }
+            function getCookie(cname) {
+    var name = cname + "=";
+    var decodedCookie = decodeURIComponent(document.cookie);
+    var ca = decodedCookie.split(';');
+    for (var i = 0; i < ca.length; i++) {
+      var c = ca[i];
+      while (c.charAt(0) == ' ') {
+        c = c.substring(1);
+      }
+      if (c.indexOf(name) == 0) {
+        return c.substring(name.length, c.length);
+      }
+    }
+    return "";
+  }
+        </script>
+                            </body>
+                        </html>

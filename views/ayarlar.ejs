@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="tr">
+    <head>
+        <link rel="stylesheet" href="style2.css">
+        <%- include('src/head') %>
+    </head>
+    <body>
+        <div id="geri-btn">
+            <i class="fa-solid fa-arrow-left geri"></i>
+        </div>
+        <h1 style="text-align: center; margin-top: 20px; font-size: 40px;">A Y A R L A R</h1>
+        <div class="sol">
+            <div id="upu">
+                <div id="upprogges"></div>
+            </div>
+            <br id="sil-br"><br id="sil-br">
+            <div class="ui-btn">
+                <div id="yuklen-img"></div>
+                <div id="siyahlik-ui">
+                    <div id="upImgText"><i class="fa-solid fa-pencil pencil"></i></div>
+                </div>
+                <img id="resimim" src="<%=user.imgUrl%>"><br>
+            </div>
+            <div id="yuklenme"></div>
+        </div>
+        <form action="" method="post" class="sag">
+            <input type="text" disabled name="imgUrl" id="imgpost" style="display: none;">
+            <input type="text" placeholder="İsim-Soyisim" autocomplete="off" name="ad" disabled value="<%=user.ad%>" id="input-ad">
+            <i class="fa-solid fa-pencil edit" id="di-btn"></i>
+            <br><br><br>
+            <button class="p-kaydet" type="submit">Değişiklikleri kaydet</button>
+        </form>
+        <script src="https://kit.fontawesome.com/814bf03a7c.js" crossorigin="anonymous"></script>
+        <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
+        import { getStorage, ref as sRef, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-storage.js";
+        const firebaseConfig = {
+          apiKey: "AIzaSyC-WV5vk8ucv4BZS1o8pte4EYP-mo0zs10",
+          authDomain: "deneme-proje-325106.firebaseapp.com",
+          projectId: "deneme-proje-325106",
+          storageBucket: "deneme-proje-325106.appspot.com",
+          messagingSenderId: "853318842758",
+          appId: "1:853318842758:web:a1a2876575dcb4a283d407"
+        };
+        const app = initializeApp(firebaseConfig);
+        var files = [];
+        var reader = new FileReader()
+
+        var myImg = document.getElementById('resimim');
+        var progLab = document.getElementById('upprogges');
+        var SelBtn = document.getElementById('siyahlik-ui');
+        var upu = document.getElementById('upu');
+        var file = document.createElement('input');
+        var silBr = document.getElementById('sil-br')
+        var inputAd = document.getElementById('input-ad')
+        var diBtn = document.getElementById('di-btn')
+        var geriBtn = document.getElementById('geri-btn')
+        var imgPost = document.getElementById('imgpost')
+
+        file.accept="image/png, image/jpeg"
+        file.type = "file"
+
+        diBtn.onclick =  di;
+
+        geriBtn.onclick = function() {
+            window.location.href = "/"
+        }
+
+        function di() {
+            inputAd.disabled = false;
+        }
+
+        file.onchange = e => {
+            files = e.target.files;
+            reader.readAsDataURL(files[0])
+        }
+
+        reader.onload = function() {
+            myImg.src = reader.result
+            UploadProcess();
+        }
+
+        function iclick() {
+            file.click()
+        }
+        SelBtn.onclick = iclick
+
+        function rondomString(length) {
+            var result           = '';
+            var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            var charactersLength = characters.length;
+            for ( var i = 0; i < length; i++ ) {
+                result += characters.charAt(Math.floor(Math.random() * charactersLength));
+            }
+            return result;
+        }
+
+        async function UploadProcess(){
+            var ImgToUpload = files[0];
+            var ImgExtIstek = files[0].name.split('.');
+            var ImgExt = ImgExtIstek[ImgExtIstek.length - 1];
+            var ImgName = rondomString(7) + "." + ImgExt;
+            console.log(ImgExt);
+            const metaData = {
+                contentType:ImgToUpload.type
+            }
+
+            const storage = getStorage();
+            const storageRef = sRef(storage, "/Resimler/" + ImgName)
+            const UploadTask = uploadBytesResumable(storageRef, ImgToUpload, metaData);
+
+            UploadTask.on('state-changed', (snapshot) => {
+                var progess = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                upu.style.display = 'inline-block'
+                        silBr.style.display = "block"
+                progLab.style.width = `${progess * 2}px`
+            },
+            (error) => {
+                alert('Hata oluştu!')
+            },
+            () => {
+                getDownloadURL(UploadTask.snapshot.ref)
+                    .then((result) => {
+                        console.log(result);
+                        imgPost.disabled = false;
+                        imgPost.value = result;
+                        upu.style.display = `none`
+                        silBr.style.display = "none"
+
+                    })
+            }
+            )
+        }
+      </script>
+    </body>
+</html>

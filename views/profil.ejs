@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="tr-TR">
+    <head>
+        <%- include('src/head') %>
+        <style>
+            container{
+                display: flex;
+                justify-content: center;
+            }
+
+            img{
+                width: 200px;
+                height: 200px;
+                border-radius: 999px;
+                border: solid 7px #2a58ad;
+            }
+
+            #geri-btn{
+                background-color: #2a58ad;
+                display: flex;
+                height: 70px;
+                width: 70px;
+                align-items: center;
+                text-align: center;
+                border-bottom-right-radius: 50px;
+                font-size: 25px;
+                cursor: pointer;
+            }
+
+            #geri-btn i{
+                color: white;
+                margin-left: 20px;
+            }
+        </style>
+    </head>
+    <body>
+        <a href="/">
+            <div id="geri-btn">
+                <i class="fa-solid fa-arrow-left geri"></i>
+            </div>
+        </a>
+        <div class="container">
+            <img src="<%=profil.imgUrl%>">
+            <h1>Ad</h1>
+            <h2 title="Ad"><%=profil.ad%></h2>
+            <br>
+            <h1>E-posta</h1>
+            <h2 title="E-posta"><%=profil.mail%></h2>
+        </div>
+        <script src="https://kit.fontawesome.com/814bf03a7c.js" crossorigin="anonymous"></script>
+    </body>
+</html>

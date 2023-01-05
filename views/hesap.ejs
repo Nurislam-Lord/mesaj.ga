@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="tr-TR">
+    <head>
+        <%- include('src/head') %>
+    </head>
+    <body style="overflow: hidden;">
+        <%- include('src/load') %>
+        <div class="yanbar" style="overflow-x: hidden !important;">
+            <ul>
+                <a href="/ayarlar">
+                    <li>
+                        <img style="border: none;" src="https://cdn-icons-png.flaticon.com/512/3098/3098120.png" alt=""><span style="text-transform: capitalize;">Ayarlar</span>
+                    </li>
+                </a>    
+                <li onclick="acPostSy()"><img src="https://cdn-icons-png.flaticon.com/512/1828/1828753.png" alt=""><span style="text-transform: capitalize;">Kişi ekle</span></li>
+                <% users.forEach(user1 => { %>
+                    <% if(user1._id != user._id) { %>
+                        <% if(user1.rehberId == user._id){ %>
+                        <a href="/mesaj/<%=user1.eklenenId%>">
+                            <li><img src="<%=user1.eklenenImgUrl%>" alt=""><span style="text-transform: capitalize;"><%=user1.eklenenAd%></span></li>
+                        </a>
+                        <% } else { %>
+                            <a href="/mesaj/<%=user1.rehberId%>">
+                                <li><img src="<%=user1.rehberImgUrl%>" alt=""><span style="text-transform: capitalize;"><%=user1.rehberAd%></span></li>
+                            </a>    
+                        <% } %>
+                    <% } %>
+                <% }) %>
+            </ul>
+        </div>
+        <div id="post-bg">
+            <form action="" method="post" class="post-form">
+                <input type="email" name="mail" required class="input" placeholder="E-posta" style="font-size: 25px;" autocomplete="off">
+                <br><br>
+                <button type="button" id="kpt-btn">Kapat</button>
+                <button type="submit" id="tmm-btn">Tamam</button>
+            </form>
+        </div>
+        <script src="https://kit.fontawesome.com/814bf03a7c.js" crossorigin="anonymous"></script>
+        <script src="index.js"></script>
+        <script>
+            var postBtn = document.getElementById('post-bg');
+            var kptBtn = document.getElementById('kpt-btn');
+
+            kptBtn.onclick = function() {
+                postBtn.style.display = "none";
+            }
+
+            function acPostSy() {
+                postBtn.style.display = "flex";
+            }
+        </script>
+    </body>
+</html>
