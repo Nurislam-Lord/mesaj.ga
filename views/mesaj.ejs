@@ -101,15 +101,26 @@
             var mesaj = ""
 
             socket.on('message', function(msg) {
-              console.log(msg);
-              if (msg.gonderenId == "<%=user._id%>") {
-                var eklecekM = `<div class="mdb"><div class="mesajb">${msg.icerik}</div></div>`
-                mesajlar.innerHTML = mesajlar.innerHTML + eklecekM;
-                mesajlar.scrollBy(0, mesajlar.scrollHeight)
-              } else {
-                var eklecekM = `<div class="md"><div class="mesaj">${msg.icerik}</div></div>`
-                mesajlar.innerHTML = mesajlar.innerHTML + eklecekM;
-                mesajlar.scrollBy(0, mesajlar.scrollHeight)
+              if (msg.gonderenId == "<%=userk._id%>" && msg.gidenId == "<%=user._id%>") {                
+                if (msg.gonderenId == "<%=user._id%>") {
+                  var eklecekM = `<div class="mdb"><div class="mesajb">${msg.icerik}</div></div>`
+                  mesajlar.innerHTML = mesajlar.innerHTML + eklecekM;
+                  mesajlar.scrollBy(0, mesajlar.scrollHeight)
+                } else {
+                  var eklecekM = `<div class="md"><div class="mesaj">${msg.icerik}</div></div>`
+                  mesajlar.innerHTML = mesajlar.innerHTML + eklecekM;
+                  mesajlar.scrollBy(0, mesajlar.scrollHeight)
+                }
+              }else if (msg.gidenId == "<%=userk._id%>" && msg.gonderenId == "<%=user._id%>") {
+                if (msg.gonderenId == "<%=user._id%>") {
+                  var eklecekM = `<div class="mdb"><div class="mesajb">${msg.icerik}</div></div>`
+                  mesajlar.innerHTML = mesajlar.innerHTML + eklecekM;
+                  mesajlar.scrollBy(0, mesajlar.scrollHeight)
+                } else {
+                  var eklecekM = `<div class="md"><div class="mesaj">${msg.icerik}</div></div>`
+                  mesajlar.innerHTML = mesajlar.innerHTML + eklecekM;
+                  mesajlar.scrollBy(0, mesajlar.scrollHeight)
+                }
               }
             });
             
