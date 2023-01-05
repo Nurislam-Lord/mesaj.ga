@@ -160,11 +160,13 @@
                 
               }
               if (mesaj != "" && mesaj.split(" ")[0] != "") {
+                if (mgInput.disabled == false) {                  
                   var mesajg = { gonderenId: "<%=user._id%>", gidenId: "<%=userk._id%>", icerik: mesaj }
                   socket.emit('chat message', mesajg);
                   document.getElementById('mg-input').value = '';
                   ksaaa()
                 }
+              }
             }
         </script>
       </body>
