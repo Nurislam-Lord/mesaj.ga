@@ -147,7 +147,9 @@ app.use(cors());
 
 Mesaj.watch().on('change', (data) => {
     console.log(data);
-    io.emit('message', data.fullDocument);
+    if (data.operationType == 'insert') {
+        io.emit('message', data.fullDocument);
+    }
 });
 
 app.get('/', (req, res) => {
@@ -248,32 +250,54 @@ app.get('/hesap', (req, res) => {
 app.post('/hesap', (req, res) => {
     if (req.cookies.userOturum != undefined) {
         console.log(req.body);
-        Users.findOne({ mail: req.body.mail })
-            .then((result) => {
-                if (result != undefined) {
-                    let rehber = new Rehber({
-                        rehberId: `${req.cookies.userOturum._id}`,
-                        rehberMail: `${req.cookies.userOturum.mail}`,
-                        rehberAd: `${req.cookies.userOturum.ad}`,
-                        rehberImgUrl: `${req.cookies.userOturum.imgUrl}`,
-                        eklenenId: `${result._id}`,
-                        eklenenMail: `${result.mail}`,
-                        eklenenAd: `${result.ad}`,
-                        eklenenImgUrl: `${result.imgUrl}`
-                    })
+        Rehber.findOne({ eklenenMail: req.cookies.userOturum.mail, rehberMail: req.body.mail })
+            .then((result1) => {
+                Rehber.findOne({ rehberMail: req.cookies.userOturum.mail, eklenenMail: req.body.mail })
+                    .then((result2) => {
+                        console.log(result2);
+                        if (result2 == null) {
+                            if (result1 == null) {
+                                Users.findOne({ mail: req.body.mail })
+                                    .then((result) => {
+                                        if (result != undefined) {
+                                            let rehber = new Rehber({
+                                                rehberId: `${req.cookies.userOturum._id}`,
+                                                rehberMail: `${req.cookies.userOturum.mail}`,
+                                                rehberAd: `${req.cookies.userOturum.ad}`,
+                                                rehberImgUrl: `${req.cookies.userOturum.imgUrl}`,
+                                                eklenenId: `${result._id}`,
+                                                eklenenMail: `${result.mail}`,
+                                                eklenenAd: `${result.ad}`,
+                                                eklenenImgUrl: `${result.imgUrl}`
+                                            })
 
-                    rehber.save()
-                        .then((result) => {
-                            res.redirect('/hesap')
-                        }).catch((err) => {
-                            console.log(err)
-                        });
-                } else {
-                    res.send('bulunamadı')
-                }
+                                            rehber.save()
+                                                .then((result) => {
+                                                    res.redirect('/hesap')
+                                                }).catch((err) => {
+                                                    console.log(err)
+                                                });
+                                        } else {
+                                            res.send('kullanıcı bulunamadı!')
+                                        }
+                                    }).catch((err) => {
+                                        console.log(err);
+                                    });
+                            } else {
+                                res.send('Bu kullanıcı sizde kayıtlı!')
+                            }
+                        } else {
+                            res.send('Bu kullanıcı sizde kayıtlı!')
+                        }
+
+                    }).catch((err) => {
+
+                    });
+
             }).catch((err) => {
                 console.log(err);
             });
+
     } else {
         res.redirect('/giris-yap')
     }
