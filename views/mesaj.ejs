@@ -37,18 +37,17 @@
                   <a href="/mesaj/<%=user1.eklenenId%>">
                     <li><img src="<%=user1.eklenenImgUrl%>"
                       alt=""><span style="text-transform:
-                        capitalize;"><%=user1.eklenenAd%></span></li>
+                      capitalize;"><%=user1.eklenenAd%></span></li>
                     </a>
-                    <% } else { %>
-                      <a href="/mesaj/<%=user1.rehberId%>">
-                        <li><img src="<%=user1.rehberImgUrl%>"
-                          alt=""><span
-                            style="text-transform:
-                            capitalize;"><%=user1.rehberAd%></span></li>
-                        </a>
-                        <% } %>
-                          <% } %>
-                            <% }) %>
+                <% } else { %>
+                  <a href="/mesaj/<%=user1.rehberId%>">
+                  <li><img src="<%=user1.rehberImgUrl%>"
+                    alt=""><span
+                    style="text-transform:capitalize;"><%=user1.rehberAd%></span></li>
+                  </a>
+                <% } %>
+              <% } %>
+            <% }) %>
           </ul>
           </div>
           <div id="post-bg">
@@ -63,6 +62,9 @@
           </div>
           <div class="head-mesaj">
             <span>
+              <a href="/hesap">
+                <i class="fa-solid fa-caret-left"></i>
+              </a>
               <img src="<%=userk.imgUrl%>">
               <h1><%=userk.ad%></h1>
             </span>
@@ -160,7 +162,7 @@
                 
               }
               if (mesaj != "" && mesaj.split(" ")[0] != "") {
-                if (mgInput.disabled == false) {                  
+                if (mgInput.disabled == false) {
                   var mesajg = { gonderenId: "<%=user._id%>", gidenId: "<%=userk._id%>", icerik: mesaj }
                   socket.emit('chat message', mesajg);
                   document.getElementById('mg-input').value = '';

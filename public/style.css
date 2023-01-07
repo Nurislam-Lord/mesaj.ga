@@ -748,25 +748,25 @@ li {
     box-shadow: 0px 0px 20px -2px rgba(0, 0, 0, 0.4);
 }
 
-.head-mesaj a{
+.head-mesaj a {
     font-size: 25px;
 }
 
-.head-mesaj a:hover{
+.head-mesaj a:hover {
     color: var(--ana-renk);
 }
 
-.head-mesaj a:hover i::before{
+.head-mesaj a:hover i::before {
     color: var(--ana-renk);
 }
 
-.head-mesaj h1{
+.head-mesaj h1 {
     margin-left: 15px;
     font-size: 40px;
     font-weight: 400;
 }
 
-.head-mesaj span{
+.head-mesaj span {
     align-items: center;
     display: flex;
 }
@@ -776,6 +776,121 @@ li {
     height: 60px;
     border-radius: 999px;
     border: solid 3px var(--ana-renk);
+}
+
+.menu-btn {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    z-index: 3;
+    font-size: 30px;
+    background-color: var(--ana-renk);
+    height: 60px;
+    width: 60px;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    border-radius: 99px;
+}
+
+.menu-btn i::before {
+    color: white;
+}
+
+#menu-k {
+    display: none;
+}
+
+.fa-caret-left{
+    display: none;
+    margin-right: 3px;
+    font-size: 40px;
+}
+
+@media(max-width: 900px) {
+    .email-img-div{
+        display: none;
+    }
+
+    .form-giris-dis{
+        margin-left: calc(50vw - 149px);
+        width: 298px;
+    }
+
+    .input{
+        width: 213px;
+    }
+
+    .fa-caret-left{
+        display: inline-block;
+    }
+
+    .mg-div{
+        width: 100vw;
+        left: 0px;
+    }
+
+    .sol{
+        display: block;
+        float: none;
+        text-align: center;
+    }
+
+    .sag{
+        display: block;
+        float: none;
+        text-align: center;
+        width: 100vw;
+        margin-top: -60px;
+    }
+}
+
+@media (max-width: 875px) {
+    .nav-ul {
+        flex-direction: column;
+        position: absolute;
+        top: 0;
+        left: -100vw;
+        width: 100vw;
+        height: 100vh;
+        justify-content: center;
+        background-color: var(--ana-renk2-acik);
+        transition: all 0.3s ease-in;
+    }
+
+    .nav-li {
+        text-align: center;
+        margin: 15px 0px;
+    }
+
+    .nav-li a {
+        font-size: 25px;
+    }
+
+    .menu-btn {
+        display: flex;
+    }
+
+    #menu-k:checked~.nav-ul {
+        left: 0;
+    }
+
+    .yanbar{
+        display: none;
+    }
+
+    .container-mesaj{
+        padding-left: 0px;
+    }
+
+    .head-mesaj{
+        width: calc(100vw - 30px);
+        left: 0;
+    }
+
+    .mesajlar{
+        width: 100vw;
+    }
 }
 
 @keyframes spin {

@@ -2,10 +2,31 @@
 <html lang="tr-TR">
     <head>
         <%- include('src/head') %>
+        <style>
+            @media(max-width: 875px){
+                .yanbar{
+                    width: 100vw;
+                    background-color: whitesmoke;
+                }
+
+                .yanbar:hover{
+                    width: 100vw;
+                    background-color: whitesmoke;
+                }
+
+                .yanbar span{
+                    color: black !important;
+                }
+
+                .yanbar li:hover{
+                    background-color: lightgray !important;
+                }
+            }
+        </style>
     </head>
     <body style="overflow: hidden;">
         <%- include('src/load') %>
-        <div class="yanbar" style="overflow-x: hidden !important;">
+        <div class="yanbar" style="overflow-x: hidden !important; display: inline-block !important;">
             <ul>
                 <a href="/ayarlar">
                     <li>
