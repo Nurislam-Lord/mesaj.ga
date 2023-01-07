@@ -52,7 +52,7 @@
           </ul>
           </div>
           <div id="post-bg">
-            <form action=""
+            <form action="/hesap"
               method="post"
               class="post-form">
               <input type="email" name="mail" required class="input" placeholder="E-posta" style="font-size: 25px;" autocomplete="off">
@@ -83,8 +83,8 @@
               <% }) %>
             </div>
             <div class="mg-div">
-              <input type="text" onkeypress="bastin(event)" placeholder="Mesajınızı girin" class="mg-input" id="mg-input">
-              <button type="submit" class="mg-btn" onclick="mg()">
+              <input autocomplete="off" type="text" onkeypress="bastin(event)" placeholder="Mesajınızı girin" class="mg-input" id="mg-input">
+              <button class="mg-btn" onclick="mg()">
                 <i class="fa-solid fa-paper-plane"></i>
               </button>
             </div>
