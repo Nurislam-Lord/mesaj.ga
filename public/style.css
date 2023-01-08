@@ -856,6 +856,7 @@ li {
         justify-content: center;
         background-color: var(--ana-renk2-acik);
         transition: all 0.3s ease-in;
+        z-index: 50;
     }
 
     .nav-li {
