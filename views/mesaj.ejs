@@ -17,6 +17,16 @@
         integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
       <body style="overflow: hidden;">
+        <div class="kr-div">
+          <img id="arayanImg" src="https://cdn.jsdelivr.net/gh/Nurislam-Lord/images@main/user.png" alt="resim yüklenemedi!">
+          <br>
+          <h1 id="arayanAd"></h1>
+          <br>
+          <div>
+              <button id="cevapla">Cevapla</button>
+              <button id="geri-c">Geri çevir</button>
+          </div>
+      </div>
         <div class="yanbar" style="overflow-x: hidden !important;">
           <ul>
             <a href="/ayarlar">
@@ -68,7 +78,11 @@
               <img src="<%=userk.imgUrl%>">
               <h1><%=userk.ad%></h1>
             </span>
-            <a href="/profil/<%=userk.mail%>">Profil <i class="fas fa-user"></i></a>
+            <span>
+              <a style="margin: 0px 7px;" href="/profil/<%=userk.mail%>"><i class="fas fa-user"></i></a>
+              <a style="margin: 0px 7px;" href="/ara-camera/<%=userk._id%>"><i class="fas fa-video-camera"></i></a>
+              <a style="margin: 0px 7px;" href="/ara-sesli/<%=userk._id%>"><i class="fas fa-phone-alt"></i></a>
+            </span>
           </div>
           <div class="container-mesaj">
             <div class="mesajlar" id="mesajlar">
@@ -101,6 +115,35 @@
             var postBtn = document.getElementById('post-bg');
             var kptBtn = document.getElementById('kpt-btn');
             var mesaj = ""
+            var cBtn = document.getElementById('cevapla');
+            var gcBtn = document.getElementById('geri-c');
+            var arayanAd = document.getElementById('arayanAd');
+            var arayanImg = document.getElementById('arayanImg');
+            var arama;
+            gcBtn.onclick = function() {
+                socket.emit('geri-cevir', arama.kim)
+                araGB.style.display = "none"
+            }
+            cBtn.onclick = function() {
+                if (arama.camera == true) {
+                    window.location.href = `/ara-camera/${arama.kime._id}`;
+                } else {
+                    window.location.href = `/cevapla/ara-sesli/${arama.kime._id}`;
+                }
+            }
+            var araGB = document.getElementsByClassName('kr-div')[0];
+            socket.on('ara-bildirim', function(data) {
+                if (data.kime._id == "<%=user._id%>") {                    
+                    arama = data
+                    if (data.camera == true) {
+                        arayanAd.innerText = `${data.kim.ad} görüntülü arıyor. . .`;
+                    } else {
+                        arayanAd.innerText = `${data.kim.ad} sesli arıyor. . .`;
+                    }
+                    arayanImg.src = data.kim.imgUrl
+                    araGB.style.display = "flex";
+                }
+            })
 
             socket.on('message', function(msg) {
               if (msg.gonderenId == "<%=userk._id%>" && msg.gidenId == "<%=user._id%>") {                

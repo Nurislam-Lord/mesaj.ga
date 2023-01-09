@@ -12,6 +12,7 @@
     --ana-renk: #2a58ad;
     --ana-renk-acik: #80a2e2;
     --ana-renk2-acik: #c2d8ff;
+    --ana-renk3-acik: #93bbff;
     --gray: darkslategrey;
 }
 
@@ -782,7 +783,7 @@ li {
     position: absolute;
     right: 10px;
     top: 10px;
-    z-index: 3;
+    z-index: 51;
     font-size: 30px;
     background-color: var(--ana-renk);
     height: 60px;
@@ -790,7 +791,6 @@ li {
     display: none;
     justify-content: center;
     align-items: center;
-    z-index: 51;
     border-radius: 99px;
 }
 
@@ -806,6 +806,161 @@ li {
     display: none;
     margin-right: 3px;
     font-size: 40px;
+}
+
+#videoDiv video{
+    width: 350px;
+    height: 230px;
+    background-color: black;
+    border-radius: 10px;
+    border: solid 5px var(--ana-renk);
+    margin: 15px;
+}
+
+.altbar{
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100vw;
+    background-color: lightgray;
+    height: 80px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.altbar div{
+    margin: 0px 5px;
+}
+
+.mic-on svg{
+    padding-right: 5px;
+}
+
+.mic-off svg{
+    padding-right: 5px;
+}
+
+.container-video{
+    display: flex;
+    padding-top: 15px;
+    justify-content: space-around;
+}
+
+.mic-on{
+    background-color: var(--ana-renk3-acik);
+    border-radius: 99px;
+    border: solid 4px var(--ana-renk);
+    display: flex;
+    height: 60px;
+    width: 60px;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.mic-off{
+    background-color: var(--gray);
+    border-radius: 99px;
+    border: solid 4px var(--gray);
+    display: none;
+    height: 60px;
+    width: 60px;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.camera-on{
+    background-color: rgb(150, 255, 255);
+    border-radius: 99px;
+    border: solid 4px darkcyan;
+    display: flex;
+    height: 60px;
+    width: 60px;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.camera-off{
+    background-color: var(--gray);
+    border-radius: 99px;
+    border: solid 4px var(--gray);
+    display: none;
+    height: 60px;
+    width: 60px;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.ayril{
+    background-color: rgb(255, 123, 123);
+    border-radius: 99px;
+    /* border: solid 1px darkred; */
+    box-shadow: 0px 0px 15px 0px rgba(0, 0, 0, 0.8);
+    display: flex;
+    height: 60px;
+    width: 60px;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+#videoDiv{
+    height: calc(100vh - 77px - 40px);
+    margin-top: 77px;
+    padding: 0px 20px;
+}
+
+#videoDiv img{
+    width: 200px;
+    height: 200px;
+    background-color: black;
+    border-radius: 9999px;
+    border: solid 5px var(--ana-renk);
+}
+
+.kr-div{
+    display: none;
+    width: 100vw;
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 9999999999999999;
+    background-color: white;
+}
+
+.kr-div img{
+    width: 150px;
+    height: 150px;
+    border-radius: 999px;
+    border: solid 4px var(--ana-renk);
+}
+
+#cevapla, #geri-c{
+    font-size: 25px;
+    margin: 0px 5px;
+    margin-top: 15px;
+    width: 150px;
+    padding: 10px 0px;
+    border: none;
+    border-radius: 10px;
+    color: whitesmoke;
+    cursor: pointer;
+}
+
+#cevapla{
+    background-color: darkgreen;
+}
+
+#geri-c{
+    background-color: darkred;
 }
 
 @media(max-width: 900px) {

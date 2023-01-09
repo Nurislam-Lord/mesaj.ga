@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <%- include('src/head') %>
+        <script src="/socket.io/socket.io.js" defer></script>
+        <script src="https://unpkg.com/peerjs@1.4.7/dist/peerjs.min.js"></script>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,500,0,0" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    </head>
+    <body>
+        <div class="head-mesaj" style="width: 100vw !important;">
+            <span>
+              <a href="/hesap">
+                <i class="fa-solid fa-caret-left"></i>
+              </a>
+              <img src="<%=userk.imgUrl%>">
+              <h1><%=userk.ad%></h1>
+            </span>
+            <span>
+                <h2 id="araniyor">
+                    Görüntülü Arama
+                </h2>
+            </span>
+        </div>
+        <div class="container-video">
+            <div id="videoDiv"></div>
+        </div>
+        <div class="altbar">
+            <!-- <div class="mic-on" onclick="micAc()">
+                <svg xmlns="http://www.w3.org/2000/svg" height="40" width="40">
+                    <path d="M24 27.25q-2.3 0-3.85-1.65-1.55-1.65-1.55-4V9.15q0-2.25 1.575-3.8Q21.75 3.8 24 3.8t3.825 1.55Q29.4 6.9 29.4 9.15V21.6q0 2.35-1.55 4T24 27.25Zm-1.65 15.3V35.7q-5.45-.55-9.125-4.575T9.55 21.6h3.25q0 4.65 3.275 7.8Q19.35 32.55 24 32.55t7.925-3.15q3.275-3.15 3.275-7.8h3.25q0 5.5-3.675 9.525T25.65 35.7v6.85Z"/>
+                </svg>
+            </div>
+            <div class="mic-off">
+                <svg xmlns="http://www.w3.org/2000/svg" height="40" width="40">
+                    <path d="m34.85 30.1-2.35-2.4q1-1.25 1.475-2.825.475-1.575.475-3.275h3.25q0 2.3-.725 4.5t-2.125 4ZM23.1 18.35Zm5.2 5.2-3.05-3.05V9.2q0-.85-.575-1.425Q24.1 7.2 23.25 7.2q-.85 0-1.425.575-.575.575-.575 1.425v7.3l-3.3-3.3V8.75q.1-2.05 1.625-3.5Q21.1 3.8 23.25 3.8q2.25 0 3.825 1.575Q28.65 6.95 28.65 9.2v12.4q0 .4-.075 1t-.275.95Zm-6.7 19V35.7q-5.45-.55-9.125-4.575T8.8 21.6h3.25q0 4.65 3.3 7.8 3.3 3.15 7.9 3.15 2 0 3.8-.65 1.8-.65 3.3-1.85l2.35 2.35q-1.6 1.4-3.575 2.225-1.975.825-4.225 1.075v6.85Zm19.9 2.65L1.75 5.45l2-2L43.5 43.2Z"/>
+                </svg>
+            </div>
+            <div class="camera-on">
+                <svg xmlns="http://www.w3.org/2000/svg" height="40" width="40">
+                    <path d="M6.208 33.625q-1.291 0-2.229-.937-.937-.938-.937-2.23V9.542q0-1.292.937-2.23.938-.937 2.229-.937h20.917q1.292 0 2.229.937.938.938.938 2.23v8.375l5.291-5.292q.375-.417.875-.208.5.208.5.75v13.666q0 .542-.5.75-.5.209-.875-.208l-5.291-5.292v8.375q0 1.292-.938 2.23-.937.937-2.229.937Z"/>
+                </svg>
+            </div>
+            <div class="camera-off">
+                <svg xmlns="http://www.w3.org/2000/svg" height="40" width="40">
+                    <path d="m35.583 27.375-5.291-5.292v4.125l-3.167-3.125V9.542H13.583l-3.125-3.167h16.667q1.292 0 2.229.937.938.938.938 2.23v8.375l5.291-5.292q.375-.375.875-.187.5.187.5.729v13.666q0 .542-.5.729-.5.188-.875-.187Zm-1.5 10.667L2.25 6.208q-.417-.416-.396-1 .021-.583.438-1 .416-.416 1.02-.416.605 0 1.021.416l31.834 31.834q.375.416.375.979 0 .562-.417 1.021-.417.416-1.021.416-.604 0-1.021-.416ZM20.417 16.375ZM6.5 6.375l3.167 3.167H6.208v20.916h20.917V27l3.125 3.125v.542q-.042 1.208-.958 2.083-.917.875-2.167.875H6.208q-1.291 0-2.229-.937-.937-.938-.937-2.23V9.542q0-1.25.875-2.167.875-.917 2.083-.958Zm9.833 13.917Z"/>
+                </svg>
+            </div> -->
+            <a href="/hesap">
+                <div class="ayril">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="40" width="40">
+                        <path d="M20 13.208q5.25 0 9.958 2.021 4.709 2.021 8.292 5.979.458.542.458 1.25 0 .709-.458 1.209L34.375 27.5q-.417.417-1.146.458Q32.5 28 32 27.625l-4.667-3.5q-.291-.25-.458-.563-.167-.312-.167-.687v-5.542q-1.625-.583-3.312-.833-1.688-.25-3.396-.25t-3.396.25q-1.687.25-3.312.833v5.542q0 .375-.167.687-.167.313-.458.563L8 27.625q-.583.417-1.229.375-.646-.042-1.146-.5L1.75 23.667q-.458-.5-.458-1.209 0-.708.458-1.25 3.583-3.916 8.292-5.958Q14.75 13.208 20 13.208Z"/>
+                    </svg>
+                </div>
+            </a>
+        </div>
+        <script type="text/javascript">
+            var roomID = "<%= RoomId %>"
+            var userId = "<%=user._id%>"
+        </script>
+        <script src="/camAra.js" charset="utf-8" defer></script>
+    </body>
+</html>

@@ -12,11 +12,27 @@ import nodemailer from 'nodemailer';
 import multer from 'multer';
 import cors from 'cors';
 import { ObjectId as ObjectID } from 'mongodb';
+import * as dotenv from 'dotenv';
+dotenv.config()
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
-import * as dotenv from 'dotenv';
-dotenv.config()
+const port = process.env.PORT || 8080;
+import { v4 as uuidv4 } from 'uuid';
+import { ExpressPeerServer } from 'peer'
+const peer = ExpressPeerServer(server, {
+    debug: true
+});
+app.use('/peerjs', peer);
+app.set('view engine', 'ejs')
+app.use(express.static('public'))
+app.get('/ara', (req, res) => {
+    res.send(uuidv4());
+})
+
+server.listen(process.env.PORT || 8080, () => {
+    console.log('server çalışıyor');
+});
 
 const firebaseConfig = {
     apiKey: process.env.API_KEY,
@@ -133,10 +149,6 @@ const mesajSchema = new mongoose.Schema({
 
 const Mesaj = new mongoose.model('mesaj', mesajSchema)
 
-server.listen(process.env.PORT || 8080, () => {
-    console.log('server çalışıyor');
-});
-
 app.use(express.static('public'))
 app.set('view engine', 'ejs')
 app.use(cookieParser());
@@ -152,12 +164,55 @@ Mesaj.watch().on('change', (data) => {
     }
 });
 
+app.get('/ara-sesli/:userAranan', (req, res) => {
+    res.send('bu özellik gelmedi!')
+})
+
+app.get('/ara-camera/:userAranan', (req, res) => {
+    if (req.cookies.userOturum != undefined) {        
+        Users.findOne({ _id: req.params.userAranan })
+            .then((result) => {
+                io.emit('ara-bildirim', { kim: req.cookies.userOturum, kime: result, camera: true })
+                res.render('camliAra', { title: 'Arama', RoomId: req.path, userk: result, user: req.cookies.userOturum });
+            }).catch((err) => {
+                console.log(err);
+                res.send('Bir hata oluştu lütfen tekrar denyin!')
+            });
+    } else {
+        res.render('/giris-yap')
+    }
+})
+
 app.get('/', (req, res) => {
     if (req.cookies.userOturum == undefined) {
         res.render('index', { title: 'Anasayfa' })
     } else {
         res.redirect('/hesap')
     }
+})
+
+// app.get('/ara/:room', (req, res) => {
+//     if (req.cookies.userOturum == undefined) {
+//         res.redirect('/giris-yap')
+//     } else {
+//         res.render('index2', { title: 'Arama', RoomId: req.params.room });
+//     }
+// });
+
+io.on("connection", (socket) => {
+    socket.on('geri-cevir', (id) => {
+        io.emit('geri cevir', id._id)
+    })
+})
+
+io.on("connection", (socket) => {
+    socket.on('newUser', (id, room) => {
+        socket.join(room);
+        socket.to(room).emit('userJoined', id);
+        socket.on('disconnect', () => {
+            socket.to(room).emit('userDisconnect', id);
+        })
+    })
 })
 
 app.get('/kayit-ol', (req, res) => {
@@ -302,39 +357,6 @@ app.post('/hesap', (req, res) => {
         res.redirect('/giris-yap')
     }
 })
-
-async function main() {
-    // Generate test SMTP service account from ethereal.email
-    // Only needed if you don't have a real mail account for testing
-    let testAccount = await nodemailer.createTestAccount();
-
-    // create reusable transporter object using the default SMTP transport
-    let transporter = nodemailer.createTransport({
-        host: "smtp.ethereal.email",
-        port: 587,
-        secure: false, // true for 465, false for other ports
-        auth: {
-            user: testAccount.user, // generated ethereal user
-            pass: '8E0A120BD200292EDC90C04EC7B3BF875713',
-        },
-    });
-
-    // send mail with defined transport object
-    let info = await transporter.sendMail({
-        from: '"Fred Foo 👻" <mail@mesaj.ga>', // sender address
-        to: "nurislamlord@gmail.com", // list of receivers
-        subject: "Hello ✔", // Subject line
-        text: "Hello world?", // plain text body
-        html: "<b>Hello world?</b>", // html body
-    });
-
-    console.log("Message sent: %s", info.messageId);
-    // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
-
-    // Preview only available when sending through an Ethereal account
-    console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
-    // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
-}
 
 app.get('/mail-dogurla', (req, res) => {
     if (req.cookies.userOturum != undefined) {
@@ -491,21 +513,8 @@ app.get('/profil/:mail', (req, res) => {
         })
 })
 
-app.get('/deneme/:uid', (req, res) => {
-    let id = (req.params.uid).trim()
-    Users.findById(id, function (err, docs) {
-        if (err) {
-            console.log(err);
-        } else {
-            console.log("Result : ", docs);
-            Rehber.find({ $or: [{ eklenenMail: req.cookies.userOturum.mail }, { rehberMail: req.cookies.userOturum.mail }] })
-                .then(async (result) => {
-                    res.render('deneme', { title: "Mesajlaş", user: req.cookies.userOturum, users: result, userk: docs })
-                }).catch((err) => {
-                    console.log(err);
-                });
-        }
-    });
+app.get('/deneme', (req, res) => {
+    res.render('kabul-red', { title: "deneme" })
 })
 
 app.all('*', (req, res) => {

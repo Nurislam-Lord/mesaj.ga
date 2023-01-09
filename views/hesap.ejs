@@ -26,6 +26,16 @@
     </head>
     <body style="overflow: hidden;">
         <%- include('src/load') %>
+        <div class="kr-div">
+            <img id="arayanImg" src="https://cdn.jsdelivr.net/gh/Nurislam-Lord/images@main/user.png" alt="resim yüklenemedi!">
+            <br>
+            <h1 id="arayanAd"></h1>
+            <br>
+            <div>
+                <button id="cevapla">Cevapla</button>
+                <button id="geri-c">Geri çevir</button>
+            </div>
+        </div>
         <div class="yanbar" style="overflow-x: hidden !important; display: inline-block !important;">
             <ul>
                 <a href="/ayarlar">
@@ -58,6 +68,7 @@
             </form>
         </div>
         <script src="https://kit.fontawesome.com/814bf03a7c.js" crossorigin="anonymous"></script>
+        <script src="/socket.io/socket.io.js"></script>
         <script src="index.js"></script>
         <script>
             var postBtn = document.getElementById('post-bg');
@@ -70,6 +81,36 @@
             function acPostSy() {
                 postBtn.style.display = "flex";
             }
+            var socket = io();
+            var cBtn = document.getElementById('cevapla');
+            var gcBtn = document.getElementById('geri-c');
+            var arayanAd = document.getElementById('arayanAd');
+            var arayanImg = document.getElementById('arayanImg');
+            var arama;
+            gcBtn.onclick = function() {
+                socket.emit('geri-cevir', arama.kim)
+                araGB.style.display = "none"
+            }
+            cBtn.onclick = function() {
+                if (arama.camera == true) {
+                    window.location.href = `/ara-camera/${arama.kime._id}`;
+                } else {
+                    window.location.href = `/cevapla/ara-sesli/${arama.kime._id}`;
+                }
+            }
+            var araGB = document.getElementsByClassName('kr-div')[0];
+            socket.on('ara-bildirim', function(data) {
+                if (data.kime._id == "<%=user._id%>") {                    
+                    arama = data
+                    if (data.camera == true) {
+                        arayanAd.innerText = `${data.kim.ad} görüntülü arıyor. . .`;
+                    } else {
+                        arayanAd.innerText = `${data.kim.ad} sesli arıyor. . .`;
+                    }
+                    arayanImg.src = data.kim.imgUrl
+                    araGB.style.display = "flex";
+                }
+            })
         </script>
     </body>
 </html>
